@@ -17,19 +17,22 @@ HTML = """<!doctype html>
 <html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Accès guide</title>
 <style>
-body{{ 
-  font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
-  background: url("https://tse4.mm.bing.net/th/id/OIP.zQujCuV1VWFy2z8BYzop0QHaLH?w=474&h=474&c=7&p=0") no-repeat center center fixed;
-  background-size: cover;
-  margin: 0;
-}}
-.wrap{{max-width:480px;margin:12vh auto;background:rgba(255,255,255,0.9);padding:24px;border-radius:16px;
-      box-shadow:0 10px 30px rgba(0,0,0,.08)}}
-h1{{font-size:20px;margin:0 0 10px}} p{{margin:0 0 14px;color:#444}}
-input,button{{padding:12px 14px;border-radius:10px;border:1px solid #ddd;font-size:16px}}
-input{{width:100%;margin:8px 0 12px}} button{{background:#111;color:#fff;border:0;cursor:pointer}}
-.msg{{color:#c00;min-height:18px;margin-top:6px}} .small{{color:#666;font-size:12px;margin-top:10px}}
+  body{{ 
+    font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    background: url("https://upload.wikimedia.org/wikipedia/commons/0/02/Vieux_Port.Marseille._-_panoramio.jpg") no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+  }}
+  .overlay{{position:fixed;inset:0;background:rgba(0,0,0,.35)}}
+  .wrap{{position:relative;max-width:520px;margin:10vh auto;background:rgba(255,255,255,0.94);
+        padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.15)}}
+  h1{{font-size:22px;margin:0 0 10px}} p{{margin:0 0 14px;color:#444}}
+  input,button[type=submit]{{padding:12px 14px;border-radius:10px;border:1px solid #ddd;font-size:16px}}
+  input{{width:100%;margin:8px 0 12px}} 
+  button[type=submit]{{background:#111;color:#fff;border:0;cursor:pointer}}
+  .msg{{color:#c00;min-height:18px;margin-top:6px}}
 </style>
+<div class="overlay"></div>
 <div class="wrap">
   <h1>🔒 Accès au guide</h1>
   <p>Entrez le <strong>mot de passe</strong> fourni par votre hôte.</p>
@@ -38,9 +41,9 @@ input{{width:100%;margin:8px 0 12px}} button{{background:#111;color:#fff;border:
     <button type="submit">Continuer</button>
   </form>
   <div class="msg">{message}</div>
-  <p class="small">FR · EN · IT · ES</p>
 </div>
 </html>"""
+
 
 
 
