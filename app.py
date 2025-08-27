@@ -18,19 +18,19 @@ HTML = """<!doctype html>
 <title>Accès guide</title>
 <style>
   body{{ 
-    font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
-    background: url("https://upload.wikimedia.org/wikipedia/commons/0/02/Vieux_Port.Marseille._-_panoramio.jpg") no-repeat center center fixed;
+    font-family: system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    background: url("https://png.pngtree.com/thumb_back/fh260/background/20230323/pngtree-marseille-old-port-and-fort-saint-jean-and-museum-of-european-photo-image_2100164.jpg") no-repeat center center fixed;
     background-size: cover;
     margin: 0;
   }}
-  .overlay{{position:fixed;inset:0;background:rgba(0,0,0,.35)}}
-  .wrap{{position:relative;max-width:520px;margin:10vh auto;background:rgba(255,255,255,0.94);
-        padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.15)}}
-  h1{{font-size:22px;margin:0 0 10px}} p{{margin:0 0 14px;color:#444}}
-  input,button[type=submit]{{padding:12px 14px;border-radius:10px;border:1px solid #ddd;font-size:16px}}
-  input{{width:100%;margin:8px 0 12px}} 
-  button[type=submit]{{background:#111;color:#fff;border:0;cursor:pointer}}
-  .msg{{color:#c00;min-height:18px;margin-top:6px}}
+  .overlay{{position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35);}}
+  .wrap{{position: relative; max-width: 520px; margin: 10vh auto; background: rgba(255,255,255,0.94); padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);}}
+  h1{{font-size: 22px; margin: 0 0 10px;}}
+  p{{margin: 0 0 14px; color: #444;}}
+  input, button[type=submit]{{padding: 12px 14px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px;}}
+  input{{width: 100%; margin: 8px 0 12px;}}
+  button[type=submit]{{background: #111; color: #fff; border: 0; cursor: pointer;}}
+  .msg{{color: #c00; min-height: 18px; margin-top: 6px;}}
 </style>
 <div class="overlay"></div>
 <div class="wrap">
@@ -43,6 +43,7 @@ HTML = """<!doctype html>
   <div class="msg">{message}</div>
 </div>
 </html>"""
+
 
 
 
