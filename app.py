@@ -17,8 +17,14 @@ HTML = """<!doctype html>
 <html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Accès guide</title>
 <style>
-body{{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;background:#f6f6f9;margin:0}}
-.wrap{{max-width:480px;margin:12vh auto;background:#fff;padding:24px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08)}}
+body{{ 
+  font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  background: url("https://tse4.mm.bing.net/th/id/OIP.zQujCuV1VWFy2z8BYzop0QHaLH?w=474&h=474&c=7&p=0") no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+}}
+.wrap{{max-width:480px;margin:12vh auto;background:rgba(255,255,255,0.9);padding:24px;border-radius:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08)}}
 h1{{font-size:20px;margin:0 0 10px}} p{{margin:0 0 14px;color:#444}}
 input,button{{padding:12px 14px;border-radius:10px;border:1px solid #ddd;font-size:16px}}
 input{{width:100%;margin:8px 0 12px}} button{{background:#111;color:#fff;border:0;cursor:pointer}}
@@ -35,6 +41,7 @@ input{{width:100%;margin:8px 0 12px}} button{{background:#111;color:#fff;border:
   <p class="small">FR · EN · IT · ES</p>
 </div>
 </html>"""
+
 
 
 def _now_utc():
