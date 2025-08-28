@@ -21,13 +21,13 @@ HTML = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Accès guide</title>
-<!-- Police élégante -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  /* IMPORTANT: évite que l’input déborde */
   *, *::before, *::after{{ box-sizing:border-box; }}
+  @keyframes fadeIn {{ from {{opacity:0}} to {{opacity:1}} }}
+  @keyframes floatUp {{ from {{opacity:0; transform:translateY(12px)}} to {{opacity:1; transform:none}} }}
 
   body{{ 
     font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial,sans-serif;
@@ -35,8 +35,7 @@ HTML = """<!doctype html>
     background-size: cover;
     margin: 0;
   }}
-  /* overlay plus marqué pour améliorer le contraste */
-  .overlay{{ position:fixed; inset:0; background:rgba(0,0,0,.55); }}
+  .overlay{{ position:fixed; inset:0; background:rgba(0,0,0,.55); animation:fadeIn .6s ease-out both; }}
 
   .wrap{{ 
     position:relative;
@@ -46,24 +45,27 @@ HTML = """<!doctype html>
     padding:24px;
     border-radius:16px;
     box-shadow:0 14px 40px rgba(0,0,0,.18);
+    text-align:center;                 /* ← centrage du contenu */
+    animation:floatUp .6s .1s ease-out both;   /* ← fondu + léger slide */
   }}
 
-  h1{{ font-size:22px; margin:0 0 8px; display:flex; align-items:center; gap:8px; }}
+  h1{{ font-size:22px; margin:0 0 8px; display:flex; align-items:center; gap:8px; justify-content:center; }}
   p{{ margin:0 0 14px; color:#444; }}
 
   .field{{ margin-top:6px; }}
   input{{ 
-    display:block; width:100%; 
+    display:block; width:100%;
     padding:14px 16px; 
     border-radius:12px; 
     border:2px solid #e5e7eb; 
     font-size:16px; 
     outline:none; 
     background:#fff;
+    margin-inline:auto;
   }}
   input:focus{{ border-color:#0078ff; box-shadow:0 0 0 3px rgba(0,120,255,.12); }}
 
-  .actions{{ margin-top:12px; display:flex; justify-content:flex-start; }}
+  .actions{{ margin-top:12px; display:flex; justify-content:center; }}  /* ← bouton au centre */
   button[type=submit]{{ 
     background:#004080; 
     color:#fff; 
@@ -72,9 +74,9 @@ HTML = """<!doctype html>
     border-radius:12px; 
     font-weight:600; 
     cursor:pointer; 
-    transition:transform .04s ease, opacity .15s ease;
+    transition:transform .04s ease, opacity .15s ease, box-shadow .15s;
   }}
-  button[type=submit]:hover{{ opacity:.95; }}
+  button[type=submit]:hover{{ opacity:.95; box-shadow:0 6px 14px rgba(0,64,128,.25); }}
   button[type=submit]:active{{ transform:translateY(1px); }}
 
   .msg{{ color:#c00; min-height:18px; margin-top:8px; }}
