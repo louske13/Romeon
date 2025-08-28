@@ -1,3 +1,21 @@
+# app.py — Portail mot de passe -> redirection vers Carrd (Render)
+from datetime import datetime, timezone
+from flask import Flask, request, redirect, Response
+
+app = Flask(__name__)
+
+# 👉 REMPLACE par ton URL Carrd (ex: "https://tonsite.carrd.co")
+CARRD_URL = "https://ton-site.carrd.co"
+
+# 👉 TOKENS (exemples). Ajoute une ligne par séjour.
+# Les dates sont en UTC; mets large pour tester.
+TOKENS = [
+    {"token": "TESTFR", "lang": "fr", "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
+    {"token": "TESTEN", "lang": "en", "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
+    # {"token": "Baptiste4", "lang": "fr", "start": "2025-08-26T00:00:00Z", "end": "2025-08-30T23:59:59Z"},
+]
+
+# ====== PAGE HTML (fond d'écran + styles propres) ======
 HTML = """<!doctype html>
 <html lang="fr">
 <meta charset="utf-8">
@@ -78,3 +96,47 @@ HTML = """<!doctype html>
   <div class="msg">{message}</div>
 </div>
 </html>"""
+
+# ====== LOGIQUE PY ======
+def _now_utc():
+    return datetime.now(timezone.utc)
+
+def _parse_iso(iso_str: str):
+    # format attendu: 'YYYY-MM-DDTHH:MM:SSZ'
+    try:
+        return datetime.strptime(iso_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except Exception:
+        # en cas de format foireux, on renvoie "toujours valide" pour éviter un 500
+        return datetime.min.replace(tzinfo=timezone.utc)
+
+def _find_match(token: str):
+    now = _now_utc()
+    for t in TOKENS:
+        if t.get("token") == token:
+            start = _parse_iso(t.get("start", "1970-01-01T00:00:00Z"))
+            end   = _parse_iso(t.get("end",   "2999-12-31T23:59:59Z"))
+            if start <= now <= end:
+                return t
+    return None
+
+def _html(message: str = "") -> Response:
+    return Response(HTML.format(message=message), mimetype="text/html; charset=utf-8")
+
+def _go(lang: str | None):
+    # si tu n'utilises pas les ancres de langue, on ignore "lang" et on va juste sur la page
+    return redirect(CARRD_URL, code=302)
+
+@app.get("/")
+def get_index():
+    # Permet aussi /?token=Baptiste4 pour auto-rediriger
+    token = (request.args.get("token") or "").strip()
+    if token:
+        m = _find_match(token)
+        return _go(m.get("lang") if m else None) if m else _html("Lien expiré ou code invalide.")
+    return _html()
+
+@app.post("/")
+def post_index():
+    token = (request.form.get("token") or "").strip()
+    m = _find_match(token)
+    return _go(m.get("lang") if m else None) if m else _html("Code invalide ou expiré.")
