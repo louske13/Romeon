@@ -9,15 +9,20 @@ CARRD_URL = "https://www.google.com"
 
 # 👉 TOKENS (exemples). Ajoute une ligne par séjour.
 # Les dates sont en UTC; mets large pour tester.
+# 👉 TOKENS (exemples). Ajoute une ligne par séjour.
+# Les dates sont en UTC; mets large pour tester.
 TOKENS = [
-    {"token": "TESTFR", "lang": "fr", "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
-    {"token": "TESTEN", "lang": "en", "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
-    # {"token": "Baptiste4", "lang": "fr", "start": "2025-08-26T00:00:00Z", "end": "2025-08-30T23:59:59Z"},
+    {"token": "TESTFR", "lang": "fr",
+     "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
+
+    {"token": "TESTEN", "lang": "en",
+     "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
+
+    {"token": "Marseille25", "lang": "fr",
+     # Séjour test : valide tout le temps
+     "start": "2020-01-01T00:00:00Z",
+     "end":   "2030-12-31T23:59:59Z"},
 ]
-{"token": "Marseille25", "lang": "fr",
- # Séjour test : valide tout le temps
- "start": "2020-01-01T00:00:00Z",
- "end":   "2030-12-31T23:59:59Z"},
 
 # ====== PAGE HTML (fond d'écran + styles propres) ======
 HTML = """<!doctype html>
