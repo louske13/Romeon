@@ -44,10 +44,6 @@ HTML = """<!doctype html>
 </div>
 </html>"""
 
-
-
-
-
 def _now_utc():
     return datetime.now(timezone.utc)
 
