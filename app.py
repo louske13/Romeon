@@ -15,9 +15,9 @@ TOKENS = [
     # {"token": "Baptiste4", "lang": "fr", "start": "2025-08-26T00:00:00Z", "end": "2025-08-30T23:59:59Z"},
 ]
 {"token": "Marseille25", "lang": "fr",
- # Séjour : 03/09/2025 13h00 → 07/09/2025 10h00 (heure FR)
- "start": "2025-09-03T11:00:00Z",
- "end":   "2025-09-07T08:00:00Z"},
+ # Séjour test : valide tout le temps
+ "start": "2020-01-01T00:00:00Z",
+ "end":   "2030-12-31T23:59:59Z"},
 
 # ====== PAGE HTML (fond d'écran + styles propres) ======
 HTML = """<!doctype html>
