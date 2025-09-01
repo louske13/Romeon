@@ -12,16 +12,15 @@
     *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--text)}
     .wrap{max-width:980px;margin:0 auto;padding:40px 20px}
     h1{margin:0 0 8px;font-size:32px} .lead{margin:0 0 24px;color:var(--muted)}
-    .grid{display:grid;gap:18px} @media(min-width:768px){.grid{grid-template-columns:repeat(3,1fr)}}
     .card{background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:24px}
     .title{font-size:22px;margin:0;color:var(--text)} .italic{color:#64748b;font-style:italic;margin:6px 0 0}
     .p{margin:12px 0 0;line-height:1.6}
-    .thumbs{display:grid;gap:10px;margin-top:14px} @media(min-width:768px){.thumbs{grid-template-columns:repeat(3,1fr)}}
+    .thumbs{display:grid;gap:10px;margin-top:14px}
+    @media(min-width:768px){.thumbs{grid-template-columns:repeat(3,1fr)}}
     .thumbs img{width:100%;height:160px;object-fit:cover;border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
     .info{margin-top:12px;color:#334155;font-size:14px;line-height:1.6}
     .info a{color:var(--link);text-decoration:underline}
     .back{display:inline-block;margin-top:26px}
-    .section-title{margin:26px 0 6px;font-weight:600;color:#334155}
     .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
     .chip{background:#e2e8f0;color:#334155;border-radius:999px;padding:6px 10px;font-size:12px}
   </style>
@@ -30,9 +29,8 @@
   <div class="wrap">
 
     <h1>🍴 Mes restos du coin</h1>
-    <p class="lead">Bon, vous l’avez deviné : je mange pas que des salades. Voici quelques adresses où la fourchette travaille autant que moi… vos papilles vont faire la ola</p>
+    <p class="lead">Bon, vous l’avez deviné : je mange pas que des salades. Voici quelques adresses où la fourchette travaille autant que moi… vos papilles vont faire la ola.</p>
 
-    <!-- Filtres (facultatif) -->
     <div class="chips">
       <span class="chip">🟢 Très proche</span>
       <span class="chip">🟡 À pied</span>
@@ -46,13 +44,13 @@
       <p class="italic">"Des produits frais de qualité, t’as pas fini de saliver une fois arrivé !"</p>
       <p class="p">
         Livraison à la maison ou sur un morceau de rocher au Vallon…
-        le bonheur sur un bout de carton et la larme quand tombent les derniers rayons du “blond”
+        le bonheur sur un bout de carton et la larme quand tombent les derniers rayons du “blond”.
         Ah, t’aimerais t’y installer hein ? Attends de voir le foncier ! Pas grave, tu reviendras à l’instant Roméon !
       </p>
       <div class="thumbs">
-        <img src="/static/images/scuderia1.jpg" alt="La Scuderia - pizza">
-        <img src="/static/images/scuderia2.jpg" alt="La Scuderia - four/pâte">
-        <img src="/static/images/scuderia3.jpg" alt="La Scuderia - coucher de soleil au Vallon">
+        <img loading="lazy" src="/static/images/restos/scuderia/1" alt="La Scuderia - photo 1">
+        <img loading="lazy" src="/static/images/restos/scuderia/2" alt="La Scuderia - photo 2">
+        <img loading="lazy" src="/static/images/restos/scuderia/3" alt="La Scuderia - photo 3">
       </div>
       <div class="info">
         🚶 1 rue Turcon → 133 rue d’Endoume (5–7 min) •
@@ -62,7 +60,7 @@
     </article>
 
     <!-- Le Baron Perché -->
-    <article class="card" id="baron">
+    <article class="card" id="baron-perche">
       <h2 class="title">Le Baron Perché <span style="font-size:14px;color:#64748b">— ~5 min à pied</span></h2>
       <p class="italic">"Le bonheur à deux pas de la maison, presque une pièce annexe du salon !"</p>
       <p class="p">
@@ -71,18 +69,18 @@
         On s’y sent vite comme un voisin. Si tu peux, demande le patio : la petite cour au calme, c’est la cerise sur la tapenade.
       </p>
       <div class="thumbs">
-       <img src="/static/images/restos/baron-perche/1" alt="Baron Perché - photo 1">
-       <img src="/static/images/restos/baron-perche/2" alt="Baron Perché - photo 2">
-       <img src="/static/images/restos/baron-perche/3" alt="Baron Perché - photo 3">
-    </div>
-    <div class="info">
-    🚶 ~5 min à pied depuis 1 rue Turcon •
-    🌐 <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Le+Baron+Perch%C3%A9+Marseille">Voir sur Google Maps</a>
-  </div>
-</article>
+        <img loading="lazy" src="/static/images/restos/baron-perche/1" alt="Baron Perché - photo 1">
+        <img loading="lazy" src="/static/images/restos/baron-perche/2" alt="Baron Perché - photo 2">
+        <img loading="lazy" src="/static/images/restos/baron-perche/3" alt="Baron Perché - photo 3">
+      </div>
+      <div class="info">
+        🚶 ~5 min à pied depuis 1 rue Turcon •
+        🌐 <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Le+Baron+Perch%C3%A9+Marseille">Voir sur Google Maps</a>
+      </div>
+    </article>
 
     <!-- Chez Michel -->
-    <article class="card" id="michel">
+    <article class="card" id="chez-michel">
       <h2 class="title">Chez Michel (Catalans) <span style="font-size:14px;color:#64748b">— ~10–12 min à pied</span></h2>
       <p class="italic">"La bouillabaisse racontée comme au temps des anciens."</p>
       <p class="p">
@@ -90,9 +88,9 @@
         Une maison de tradition à deux pas de la plage des Catalans. Si tu veux un souvenir marseillais qui reste, c’est là.
       </p>
       <div class="thumbs">
-        <img src="/static/images/michel1.jpg" alt="Chez Michel - bouillabaisse">
-        <img src="/static/images/michel2.jpg" alt="Chez Michel - salle">
-        <img src="/static/images/michel3.jpg" alt="Chez Michel - détail">
+        <img loading="lazy" src="/static/images/restos/chez-michel/1" alt="Chez Michel - photo 1">
+        <img loading="lazy" src="/static/images/restos/chez-michel/2" alt="Chez Michel - photo 2">
+        <img loading="lazy" src="/static/images/restos/chez-michel/3" alt="Chez Michel - photo 3">
       </div>
       <div class="info">
         🚶 ~10–12 min à pied — 1 rue Turcon → Catalans •
@@ -101,7 +99,7 @@
     </article>
 
     <!-- Chez Marinette -->
-    <article class="card" id="marinette">
+    <article class="card" id="chez-marinette">
       <h2 class="title">Chez Marinette <span style="font-size:14px;color:#64748b">— ~12–15 min à pied</span></h2>
       <p class="italic">"Une cuisine qui sourit, des assiettes qui donnent envie de partager."</p>
       <p class="p">
@@ -109,9 +107,9 @@
         Ambiance chaleureuse, on s’y sent vite à l’aise — comme chez des amis du quartier.
       </p>
       <div class="thumbs">
-        <img src="/static/images/marinette1.jpg" alt="Chez Marinette - plat">
-        <img src="/static/images/marinette2.jpg" alt="Chez Marinette - salle">
-        <img src="/static/images/marinette3.jpg" alt="Chez Marinette - détail">
+        <img loading="lazy" src="/static/images/restos/chez-marinette/1" alt="Chez Marinette - photo 1">
+        <img loading="lazy" src="/static/images/restos/chez-marinette/2" alt="Chez Marinette - photo 2">
+        <img loading="lazy" src="/static/images/restos/chez-marinette/3" alt="Chez Marinette - photo 3">
       </div>
       <div class="info">
         🚶 ~12–15 min à pied — secteur Saint-Victor/Endoume •
@@ -120,7 +118,7 @@
     </article>
 
     <!-- Chez Fonfon -->
-    <article class="card" id="fonfon">
+    <article class="card" id="chez-fonfon">
       <h2 class="title">Chez Fonfon (Vallon des Auffes) <span style="font-size:14px;color:#64748b">— ~18–20 min à pied</span></h2>
       <p class="italic">"Le Vallon, la mer, et la bouillabaisse en habit de lumière."</p>
       <p class="p">
@@ -129,9 +127,9 @@
         “m’y voilà, enfin j’suis bieng là.”
       </p>
       <div class="thumbs">
-        <img src="/static/images/fonfon1.jpg" alt="Chez Fonfon - Vallon des Auffes">
-        <img src="/static/images/fonfon2.jpg" alt="Chez Fonfon - bouillabaisse">
-        <img src="/static/images/fonfon3.jpg" alt="Chez Fonfon - terrasse">
+        <img loading="lazy" src="/static/images/restos/chez-fonfon/1" alt="Chez Fonfon - photo 1">
+        <img loading="lazy" src="/static/images/restos/chez-fonfon/2" alt="Chez Fonfon - photo 2">
+        <img loading="lazy" src="/static/images/restos/chez-fonfon/3" alt="Chez Fonfon - photo 3">
       </div>
       <div class="info">
         🚶 ~18–20 min à pied (ou 🚌 bus 83) — depuis 1 rue Turcon •
@@ -140,7 +138,7 @@
     </article>
 
     <!-- Les Grandes Halles du Vieux-Port -->
-    <article class="card" id="halles">
+    <article class="card" id="halles-vieux-port">
       <h2 class="title">Les Grandes Halles du Vieux-Port <span style="font-size:14px;color:#64748b">— ~22–25 min à pied</span></h2>
       <p class="italic">"Un tour du port en quelques stands : chacun trouve son bonheur."</p>
       <p class="p">
@@ -148,9 +146,9 @@
         On pioche, on partage, on regarde le port vivre — simple et efficace, surtout en groupe.
       </p>
       <div class="thumbs">
-        <img src="/static/images/halles1.jpg" alt="Grandes Halles - stands">
-        <img src="/static/images/halles2.jpg" alt="Grandes Halles - ambiance">
-        <img src="/static/images/halles3.jpg" alt="Grandes Halles - terrasse">
+        <img loading="lazy" src="/static/images/restos/halles-vieux-port/1" alt="Grandes Halles - photo 1">
+        <img loading="lazy" src="/static/images/restos/halles-vieux-port/2" alt="Grandes Halles - photo 2">
+        <img loading="lazy" src="/static/images/restos/halles-vieux-port/3" alt="Grandes Halles - photo 3">
       </div>
       <div class="info">
         🚶 ~22–25 min à pied (ou 🚌 bus 83 → Vieux-Port) •
