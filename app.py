@@ -10,10 +10,14 @@ app = Flask(__name__)
 app.secret_key = "change-moi-par-une-grosse-cle-secrete"
 
 # ========= CONFIG =========
-BG_URL   = "/static/images/bg.jpg"   # (optionnel) Image de fond, si tu veux t’en servir ailleurs
+BG_URL   = "/static/images/bg.jpg"   # Image de fond
 WIFI_SSID = "TON_SSID"
 WIFI_PASS = "TON_MDP_WIFI"
-WIFI_AUTH = "WPA"  # WEP | WPA | nopass
+WIFI_AUTH = "WPA"
+
+APP_ADDRESS = "1 rue Turcon, 13007 Marseille"
+MAPS_URL = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007+Marseille"
+AIRBNB_URL = "https://www.airbnb.fr/hosting/listings/editor/1366485756382394689/view-your-space"
 
 # Codes valides (tokens)
 TOKENS = [
@@ -21,7 +25,7 @@ TOKENS = [
      "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
 ]
 
-# ========= HTML PAGES (inline) =========
+# ========= HTML PAGES =========
 LOGIN_HTML = """<!doctype html>
 <html lang="{lang}">
 <meta charset="utf-8" />
@@ -76,9 +80,15 @@ GUIDE_HTML = """<!doctype html>
   <div class="max-w-6xl mx-auto px-4 pt-8 pb-16">
 
     <!-- Barre top -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between gap-4 flex-wrap">
       <h1 class="text-2xl md:text-3xl font-semibold">🏡 Guide de l’appartement</h1>
-      <a href="{logout_url}" class="text-sm text-slate-600 hover:text-slate-900 underline">Déconnexion</a>
+      <div class="flex items-center gap-3">
+        <a href="{airbnb}" target="_blank"
+           class="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 shadow-sm">
+          🏠 Voir l’annonce Airbnb
+        </a>
+        <a href="{logout_url}" class="text-sm text-slate-600 hover:text-slate-900 underline">Déconnexion</a>
+      </div>
     </div>
 
     <!-- Intro -->
@@ -94,13 +104,18 @@ GUIDE_HTML = """<!doctype html>
 
       <!-- Carte Wi-Fi -->
       <div class="bg-white rounded-2xl shadow p-6">
-        <h2 class="text-lg font-semibold">📶 Wi-Fi</h2>
-        <p class="mt-1">Réseau : <b>{ssid}</b><br>Mot de passe : <b>{pwd}</b></p>
-        <div id="wifi-qr" class="mt-4 flex items-center justify-center">
-          <div id="qrbox" class="p-3 rounded-xl border border-slate-200"></div>
-        </div>
-        <div class="mt-3 text-xs text-slate-500 text-center">
-          Scannez le QR code pour vous connecter automatiquement.
+        <h2 class="text-lg font-semibold mb-3">📶 Wi-Fi</h2>
+
+        <!-- deux colonnes -->
+        <div class="grid md:grid-cols-2 gap-4 items-center">
+          <div class="text-[15px]">
+            <div>Réseau : <b>{ssid}</b></div>
+            <div>Mot de passe : <b>{pwd}</b></div>
+            <div class="mt-3 text-xs text-slate-500">Scannez le QR code pour vous connecter automatiquement.</div>
+          </div>
+          <div class="flex justify-center md:justify-end">
+            <div id="qrbox" class="p-3 rounded-xl border border-slate-200"></div>
+          </div>
         </div>
       </div>
 
@@ -108,6 +123,7 @@ GUIDE_HTML = """<!doctype html>
       <div class="bg-white rounded-2xl shadow p-6">
         <h2 class="text-lg font-semibold">Rubriques</h2>
         <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+
           <a href="/restaurants" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
             <span class="text-xl">🍽️</span>
             <div>
@@ -132,14 +148,30 @@ GUIDE_HTML = """<!doctype html>
             </div>
           </a>
 
-          <!-- remplacé : Wi-Fi (détails) -> Commerces -->
           <a href="/commerces" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
-            <span class="text-xl">🛒</span>
+            <span class="text-xl">🛍️</span>
             <div>
-              <div class="font-semibold group-hover:text-blue-700">Commerces utiles & incontournables</div>
-              <div class="text-xs text-slate-500">Boulangeries, primeurs, supérettes, pharmacies…</div>
+              <div class="font-semibold group-hover:text-blue-700">Commerces utiles</div>
+              <div class="text-xs text-slate-500">Artisans & incontournables du quartier</div>
             </div>
           </a>
+
+          <a href="{maps}" target="_blank" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
+            <span class="text-xl">📍</span>
+            <div>
+              <div class="font-semibold group-hover:text-blue-700">Localisation</div>
+              <div class="text-xs text-slate-500">{address}</div>
+            </div>
+          </a>
+
+          <a href="/numeros" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
+            <span class="text-xl">☎️</span>
+            <div>
+              <div class="font-semibold group-hover:text-blue-700">Numéros utiles</div>
+              <div class="text-xs text-slate-500">Urgences & contacts du quartier</div>
+            </div>
+          </a>
+
         </div>
       </div>
 
@@ -151,14 +183,13 @@ GUIDE_HTML = """<!doctype html>
     </footer>
   </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     const WIFI_TEXT = `WIFI:T:{auth};S:{ssid};P:{pwd};;`;
     new QRCode(document.getElementById("qrbox"), {{ "text": WIFI_TEXT, "width": 180, "height": 180 }});
   </script>
 </body>
 </html>
-
 """
 
 # ========= UTIL & AUTH =========
@@ -177,7 +208,6 @@ def _token_valid(token):
     return None
 
 def _html(s: str):
-    # Réponse HTML simple avec l’entête correct
     resp = make_response(s)
     resp.headers["Content-Type"] = "text/html; charset=utf-8"
     return resp
@@ -203,7 +233,10 @@ def guide():
     return _html(GUIDE_HTML.format(
         bg_url=BG_URL,
         logout_url=url_for("logout"),
-        ssid=WIFI_SSID, pwd=WIFI_PASS, auth=WIFI_AUTH
+        ssid=WIFI_SSID, pwd=WIFI_PASS, auth=WIFI_AUTH,
+        airbnb=AIRBNB_URL,
+        maps=MAPS_URL,
+        address=APP_ADDRESS
     ))
 
 @app.get("/logout")
@@ -211,7 +244,7 @@ def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# ------- RUBRIQUES (templates) -------
+# ------- RUBRIQUES -------
 @app.get("/restaurants")
 def restaurants():
     if not session.get("ok"):
@@ -236,12 +269,11 @@ def commerces():
         return redirect(url_for("login_get"))
     return render_template("commerces.html")
 
-# (garde /wifi si tu as un template wifi.html, sinon tu peux le supprimer)
-@app.get("/wifi")
-def wifi():
+@app.get("/numeros")
+def numeros():
     if not session.get("ok"):
         return redirect(url_for("login_get"))
-    return render_template("wifi.html")
+    return render_template("numeros.html")
 
 # ------- PWA -------
 @app.get("/manifest.webmanifest")
