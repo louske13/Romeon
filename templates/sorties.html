@@ -1,11 +1,208 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sorties</title>
-<style>body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial} .wrap{max-width:900px;margin:0 auto;padding:40px 20px}
-.card{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:24px} .muted{color:#6b7280}</style>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"></head>
-<body style="background:#f6f7fb"><div class="wrap">
-<h1 style="font-size:28px;margin:0 0 8px">🎉 Sorties</h1><p class="muted" style="margin:0 0 24px">Bars, coucher de soleil, calanques au petit matin…</p>
-<div class="card"><p class="muted" style="margin:0">Contenu à venir</p></div>
-<p style="margin-top:24px"><a href="/guide">← Retour au guide</a></p>
-</div></body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sorties, bars & évènements</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#f6f7fb; --text:#0f172a; --muted:#6b7280; --card:#ffffff; --link:#1e40af; }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:40px 20px}
+    h1{margin:0 0 8px;font-size:32px}
+    .lead{margin:0 0 24px;color:var(--muted)}
+    .card{background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:24px}
+    .title{font-size:22px;margin:0;color:var(--text)}
+    .italic{color:#64748b;font-style:italic;margin:6px 0 0}
+    .p{margin:12px 0 0;line-height:1.6}
+    .thumbs{display:grid;gap:10px;margin-top:14px}
+    @media(min-width:768px){.thumbs{grid-template-columns:repeat(3,1fr)}}
+    .thumbs img{width:100%;height:160px;object-fit:cover;border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+    .info{margin-top:12px;color:#334155;font-size:14px;line-height:1.6}
+    .info a{color:var(--link);text-decoration:underline}
+    .back{display:inline-block;margin-top:26px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 22px}
+    .chip{background:#e2e8f0;color:#334155;border-radius:999px;padding:8px 12px;font-size:12px;text-decoration:none}
+    .anchor{display:block;position:relative;top:-12px;visibility:hidden}
+    .section-title{margin:28px 0 10px;font-size:20px;color:#334155}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <h1>🎶 Bars & évènements (à deux pas du 13007)</h1>
+    <p class="lead">Tout au même endroit : vos bars préférés et les grands soirs (OM, Opéra, cinémas). Utilisez les <b>chips</b> pour aller direct à la bonne carte.</p>
+
+    <!-- CHIPS GLOBAL -->
+    <div class="chips">
+      <!-- Bars -->
+      <a class="chip" href="#carry-nation">🍸 Carry Nation</a>
+      <a class="chip" href="#la-ruche">🍷 La Ruche</a>
+      <a class="chip" href="#white-rabbit">🍺 White Rabbit</a>
+      <a class="chip" href="#red-lion">🍻 Red Lion</a>
+      <a class="chip" href="#omalley">🍀 O’Malley’s</a>
+      <!-- Events -->
+      <a class="chip" href="#om">⚽️ Calendrier OM</a>
+      <a class="chip" href="#opera">🎭 Opéra</a>
+      <a class="chip" href="#cine">🎬 Cinémas</a>
+    </div>
+
+    <!-- ====== BARS ====== -->
+    <h2 class="section-title">🍹 Bars & pubs</h2>
+
+    <!-- ANCRE Carry Nation -->
+    <span id="carry-nation" class="anchor"></span>
+    <article class="card">
+      <h2 class="title">Carry Nation (speakeasy) <span style="font-size:14px;color:#64748b">— Vieux-Port / Opéra</span></h2>
+      <p class="italic">"Adresse cachée & résa obligatoire : expérience cocktail à part."</p>
+      <p class="p">
+        Bar clandestin emblématique de Marseille. L’adresse exacte est communiquée après réservation.
+        Idéal pour une soirée cosy et soignée.
+      </p>
+      <div class="thumbs">
+        <img loading="lazy" src="/static/images/sortie/cn/1.JPG" alt="Carry Nation - photo 1">
+        <img loading="lazy" src="/static/images/sortie/cn/2.jpeg" alt="Carry Nation - photo 2">
+        <img loading="lazy" src="/static/images/sortie/cn/3.jpg" alt="Carry Nation - photo 3">
+      </div>
+      <div class="info">
+        🌐 <a target="_blank" href="https://carrynation.fr/">Site & réservation</a> •
+        🗺️ <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Carry+Nation+Marseille">Itinéraire</a>
+      </div>
+    </article>
+
+    <!-- ANCRE La Ruche -->
+    <span id="la-ruche" class="anchor"></span>
+    <article class="card">
+      <h2 class="title">La Ruche (vins & cocktails) <span style="font-size:14px;color:#64748b">— ~8–10 min à pied</span></h2>
+      <p class="italic">"Ambiance Saint-Victor, tapas à partager, vins nature & cocktails."</p>
+      <p class="p">
+        Spot convivial du 7<sup>e</sup> : planches, petites assiettes, bonne musique. Parfait pour commencer la soirée à deux pas de l’appart.
+      </p>
+      <div class="thumbs">
+        <img loading="lazy" src="/static/images/sortie/laruche/1.jpeg" alt="La Ruche - photo 1">
+        <img loading="lazy" src="/static/images/sortie/laruche/2.jpeg" alt="La Ruche - photo 2">
+        <img loading="lazy" src="/static/images/sortie/laruche/3.jpeg" alt="La Ruche - photo 3">
+      </div>
+      <div class="info">
+        📍 128 rue Sainte, 13007 Marseille •
+        🌐 <a target="_blank" href="https://www.laruchemarseille.fr/">Site</a> •
+        🗺️ <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=La+Ruche+128+Rue+Sainte+13007+Marseille">Itinéraire</a>
+      </div>
+    </article>
+
+    <!-- ANCRE White Rabbit -->
+    <span id="white-rabbit" class="anchor"></span>
+    <article class="card">
+      <h2 class="title">White Rabbit (pub & craft) <span style="font-size:14px;color:#64748b">— Joliette</span></h2>
+      <p class="italic">"Grand pub animé, happy hour & concerts ponctuels."</p>
+      <p class="p">Bonne sélection de bières pression et bouteilles, burgers/snacks, ambiance rock. Idéal entre amis.</p>
+      <div class="thumbs">
+        <img loading="lazy" src="/static/images/sortie/wr/1.jpg" alt="White Rabbit - photo 1">
+        <img loading="lazy" src="/static/images/sortie/wr/2.jpeg" alt="White Rabbit - photo 2">
+        <img loading="lazy" src="/static/images/sortie/wr/3.jpeg" alt="White Rabbit - photo 3">
+      </div>
+      <div class="info">
+        📍 23 Quai de la Joliette, 13002 Marseille •
+        📷 <a target="_blank" href="https://www.facebook.com/whiterabbitpage/">Page</a> •
+        🗺️ <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=White+Rabbit+23+Quai+de+la+Joliette+13002+Marseille">Itinéraire</a>
+      </div>
+    </article>
+
+    <!-- ANCRE Red Lion -->
+    <span id="red-lion" class="anchor"></span>
+    <article class="card">
+      <h2 class="title">The Red Lion (English pub) <span style="font-size:14px;color:#64748b">— Pointe Rouge</span></h2>
+      <p class="italic">"Grand pub en bord de mer, écrans pour le sport, tard le soir."</p>
+      <p class="p">Gros classique pour les matchs & soirées festives au bord de l’eau. Accès en bus/voiture depuis le 7<sup>e</sup>.</p>
+      <div class="thumbs">
+        <img loading="lazy" src="/static/images/sortie/red/1.jpeg" alt="Red Lion - photo 1">
+        <img loading="lazy" src="/static/images/sortie/red/2.jpeg" alt="Red Lion - photo 2">
+        <img loading="lazy" src="/static/images/sortie/red/3.jpeg" alt="Red Lion - photo 3">
+      </div>
+      <div class="info">
+        📍 231 Av. Pierre Mendès France, 13008 Marseille •
+        🗺️ <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=The+Red+Lion+231+avenue+Pierre+Mend%C3%A8s+France+13008+Marseille">Itinéraire</a>
+      </div>
+    </article>
+
+    <!-- ANCRE O’Malley’s -->
+    <span id="omalley" class="anchor"></span>
+    <article class="card">
+      <h2 class="title">O’Malley’s (Irish pub) <span style="font-size:14px;color:#64748b">— Vieux-Port</span></h2>
+      <p class="italic">"Rock, sports & Guinness au bord de l’eau."</p>
+      <p class="p">Pub irlandais emblématique du Vieux-Port : écrans pour les matchs, live & grosse ambiance.</p>
+      <div class="thumbs">
+        <img loading="lazy" src="/static/images/sortie/omaley/1.jpeg" alt="O'Malley’s - photo 1">
+        <img loading="lazy" src="/static/images/sortie/omaley/2.png" alt="O'Malley’s - photo 2">
+        <img loading="lazy" src="/static/images/sortie/omaley/3.jpeg" alt="O'Malley’s - photo 3">
+      </div>
+      <div class="info">
+        📍 9 Quai de Rive Neuve, 13001 Marseille •
+        🌐 <a target="_blank" href="https://irishpubmarseille.com/le-omalleys/">Site</a> •
+        🗺️ <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=O%27Malley%27s+9+Quai+de+Rive+Neuve+13001+Marseille">Itinéraire</a>
+      </div>
+    </article>
+
+    <!-- ====== ÉVÈNEMENTS ====== -->
+    <h2 class="section-title">📅 Évènements – sport & culture</h2>
+
+    <!-- ANCRE OM -->
+    <span id="om" class="anchor"></span>
+    <article class="card" id="om-card">
+      <h2 class="title">Olympique de Marseille – Orange Vélodrome</h2>
+      <p class="italic">"Vivre un match au Vél’ : frissons garantis."</p>
+      <p class="p">Accédez au <b>calendrier officiel</b> & à la <b>billetterie</b> (horaires TV susceptibles d’ajustement) :</p>
+      <div class="thumbs">
+        <img loading="lazy" src="/static/images/sortie/om/1.jpeg" alt="OM - photo 1">
+        <img loading="lazy" src="/static/images/sortie/om/2.jpeg" alt="OM - photo 2">
+        <img loading="lazy" src="/static/images/sortie/om/3.jpeg" alt="OM - photo 3">
+      </div>
+      <div class="info">
+        🎫 <a target="_blank" href="https://billetterie.om.fr/fr/calendrier-equipe-premiere">Calendrier & billets OM</a> •
+        🏟️ <a target="_blank" href="https://www.orangevelodrome.com/">Orange Vélodrome</a> •
+        🗺️ <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Orange+V%C3%A9lodrome+Marseille">Itinéraire</a>
+      </div>
+    </article>
+
+    <!-- ANCRE OPERA -->
+    <span id="opera" class="anchor"></span>
+    <article class="card" id="opera-card">
+      <h2 class="title">Opéra de Marseille & Théâtre de l’Odéon</h2>
+      <p class="italic">"Soirées lyriques, opérettes & concerts."</p>
+      <p class="p">Programme & billetterie :</p>
+      <div class="thumbs">
+        <img loading="lazy" src="/static/images/sortie/opera/1.jpeg" alt="Opéra - photo 1">
+        <img loading="lazy" src="/static/images/sortie/opera/3.jpeg" alt="Opéra - photo 2">
+        <img loading="lazy" src="/static/images/sortie/opera/3.png" alt="Opéra - photo 3">
+      </div>
+      <div class="info">
+        🎟️ <a target="_blank" href="https://opera-odeon.marseille.fr/programmation">Programmation officielle</a> •
+        🗺️ <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Op%C3%A9ra+de+Marseille">Opéra (itinéraire)</a>
+      </div>
+    </article>
+
+    <!-- ANCRE CINÉ -->
+    <span id="cine" class="anchor"></span>
+    <article class="card" id="cine-card">
+      <h2 class="title">Cinémas proches</h2>
+      <p class="italic">"Blockbusters, VOST & cycles art & essai."</p>
+      <div class="thumbs">
+        <img loading="lazy" src="/static/images/sortie/cine/1.jpeg" alt="Cinéma - photo 1">
+        <img loading="lazy" src="/static/images/sortie/cine/2.jpeg" alt="Cinéma - photo 2">
+        <img loading="lazy" src="/static/images/sortie/cine/3.jpeg" alt="Cinéma - photo 3">
+      </div>
+      <div class="info">
+        🎞️ Le Prado — <a target="_blank" href="https://www.cinema-leprado.fr/a-laffiche/">À l’affiche</a> •
+        🎞️ Les Variétés — <a target="_blank" href="https://lesvarietes-marseille.com/">Programme</a> •
+        🗺️ <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Cin%C3%A9ma+Le+Prado+Marseille">Itinéraire</a>
+      </div>
+    </article>
+
+    <a class="back" href="/guide">← Retour au guide</a>
+  </div>
+</body>
+</html>
