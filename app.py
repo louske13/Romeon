@@ -10,10 +10,10 @@ app = Flask(__name__)
 app.secret_key = "change-moi-par-une-grosse-cle-secrete"
 
 # ========= CONFIG =========
-BG_URL   = "/static/images/bg.jpg"   # Image de fond
+BG_URL   = "/static/images/bg.jpg"   # (optionnel) Image de fond, si tu veux t’en servir ailleurs
 WIFI_SSID = "TON_SSID"
 WIFI_PASS = "TON_MDP_WIFI"
-WIFI_AUTH = "WPA"
+WIFI_AUTH = "WPA"  # WEP | WPA | nopass
 
 # Codes valides (tokens)
 TOKENS = [
@@ -132,11 +132,12 @@ GUIDE_HTML = """<!doctype html>
             </div>
           </a>
 
-          <a href="/restaurants#delivery" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
-            <span class="text-xl">🛵</span>
+          <!-- remplacé : Wi-Fi (détails) -> Commerces -->
+          <a href="/commerces" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
+            <span class="text-xl">🛒</span>
             <div>
-              <div class="font-semibold group-hover:text-blue-700">Wi-Fi (détails)</div>
-              <div class="text-xs text-slate-500">QR code + infos pratiques</div>
+              <div class="font-semibold group-hover:text-blue-700">Commerces utiles & incontournables</div>
+              <div class="text-xs text-slate-500">Boulangeries, primeurs, supérettes, pharmacies…</div>
             </div>
           </a>
         </div>
@@ -153,7 +154,7 @@ GUIDE_HTML = """<!doctype html>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     const WIFI_TEXT = `WIFI:T:{auth};S:{ssid};P:{pwd};;`;
-    new QRCode(document.getElementById("qrbox"), {{ text: WIFI_TEXT, width: 180, height: 180 }});
+    new QRCode(document.getElementById("qrbox"), { text: WIFI_TEXT, width: 180, height: 180 });
   </script>
 </body>
 </html>
@@ -175,7 +176,7 @@ def _token_valid(token):
     return None
 
 def _html(s: str):
-    # Remplace l'usage de Response (non importé) par make_response
+    # Réponse HTML simple avec l’entête correct
     resp = make_response(s)
     resp.headers["Content-Type"] = "text/html; charset=utf-8"
     return resp
@@ -209,7 +210,7 @@ def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# ------- RUBRIQUES (rendent des templates) -------
+# ------- RUBRIQUES (templates) -------
 @app.get("/restaurants")
 def restaurants():
     if not session.get("ok"):
@@ -228,6 +229,13 @@ def sorties():
         return redirect(url_for("login_get"))
     return render_template("sorties.html")
 
+@app.get("/commerces")
+def commerces():
+    if not session.get("ok"):
+        return redirect(url_for("login_get"))
+    return render_template("commerces.html")
+
+# (garde /wifi si tu as un template wifi.html, sinon tu peux le supprimer)
 @app.get("/wifi")
 def wifi():
     if not session.get("ok"):
