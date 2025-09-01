@@ -1,12 +1,16 @@
 # app.py — Portail sécurisé Airbnb Guide (Flask + Tailwind + PWA)
+
 from datetime import datetime, timezone
-from flask import Flask, request, redirect, Response, session, url_for
+from flask import (
+    Flask, request, redirect, url_for, session,
+    make_response, render_template
+)
 
 app = Flask(__name__)
 app.secret_key = "change-moi-par-une-grosse-cle-secrete"
 
 # ========= CONFIG =========
-BG_URL = "/static/images/bg.jpg"   # Image de fond
+BG_URL   = "/static/images/bg.jpg"   # Image de fond
 WIFI_SSID = "TON_SSID"
 WIFI_PASS = "TON_MDP_WIFI"
 WIFI_AUTH = "WPA"
@@ -17,7 +21,7 @@ TOKENS = [
      "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
 ]
 
-# ========= HTML PAGES =========
+# ========= HTML PAGES (inline) =========
 LOGIN_HTML = """<!doctype html>
 <html lang="{lang}">
 <meta charset="utf-8" />
@@ -73,15 +77,10 @@ GUIDE_HTML = """<!doctype html>
       <div class="bg-white/95 rounded-2xl shadow-2xl p-6">
         <h2 class="text-lg font-semibold">Rubriques</h2>
         <div class="grid grid-cols-2 gap-4 mt-3">
-          <a href="/restaurants" class="bg-slate-100 rounded-xl p-3 text-center hover:bg-slate-200">
-            🍽️ Restaurants
-          </a>
-          <a href="/visites" class="bg-slate-100 rounded-xl p-3 text-center hover:bg-slate-200">
-            🏛️ À visiter
-          </a>
-          <a href="/sorties" class="bg-slate-100 rounded-xl p-3 text-center hover:bg-slate-200">
-            🎶 Sorties
-          </a>
+          <a href="/restaurants" class="bg-slate-100 rounded-xl p-3 text-center hover:bg-slate-200">🍽️ Restaurants</a>
+          <a href="/visites"     class="bg-slate-100 rounded-xl p-3 text-center hover:bg-slate-200">🏛️ À visiter</a>
+          <a href="/sorties"     class="bg-slate-100 rounded-xl p-3 text-center hover:bg-slate-200">🎶 Sorties</a>
+          <a href="/wifi"        class="bg-slate-100 rounded-xl p-3 text-center hover:bg-slate-200">📶 Wi-Fi (détails)</a>
         </div>
       </div>
     </section>
@@ -98,48 +97,12 @@ GUIDE_HTML = """<!doctype html>
 </html>
 """
 
-RESTAURANTS_HTML = f"""<!doctype html>
-<html><body style="background:url('{BG_URL}');background-size:cover">
-<div style="background:rgba(255,255,255,0.9);margin:40px auto;max-width:700px;padding:20px;border-radius:16px">
-<h1>🍽️ Bons plans restaurants</h1>
-<h2>Chez Fonfon</h2>
-<p>Spécialité bouillabaisse · Vieux-Port.</p>
-<a href="https://goo.gl/maps/xxxx" target="_blank">Voir sur Google Maps</a>
-<h2>La Caravelle</h2>
-<p>Bar-restaurant avec vue sur le port et ambiance jazz.</p>
-<a href="https://goo.gl/maps/yyyy" target="_blank">Voir sur Google Maps</a>
-</div></body></html>
-"""
+# ========= UTIL & AUTH =========
+def _now_utc():
+    return datetime.now(timezone.utc)
 
-VISITES_HTML = f"""<!doctype html>
-<html><body style="background:url('{BG_URL}');background-size:cover">
-<div style="background:rgba(255,255,255,0.9);margin:40px auto;max-width:700px;padding:20px;border-radius:16px">
-<h1>🏛️ Lieux à visiter</h1>
-<h2>Notre-Dame de la Garde</h2>
-<p>Emblème de Marseille avec vue panoramique.</p>
-<a href="https://goo.gl/maps/xxxx" target="_blank">Voir sur Google Maps</a>
-<h2>Calanques de Sormiou</h2>
-<p>Site naturel exceptionnel.</p>
-<a href="https://goo.gl/maps/yyyy" target="_blank">Voir sur Google Maps</a>
-</div></body></html>
-"""
-
-SORTIES_HTML = f"""<!doctype html>
-<html><body style="background:url('{BG_URL}');background-size:cover">
-<div style="background:rgba(255,255,255,0.9);margin:40px auto;max-width:700px;padding:20px;border-radius:16px">
-<h1>🎶 Sorties & activités</h1>
-<h2>Dock des Suds</h2>
-<p>Lieu incontournable pour concerts et soirées.</p>
-<a href="https://goo.gl/maps/xxxx" target="_blank">Voir sur Google Maps</a>
-<h2>Cours Julien</h2>
-<p>Quartier animé avec bars, street-art et musique live.</p>
-<a href="https://goo.gl/maps/yyyy" target="_blank">Voir sur Google Maps</a>
-</div></body></html>
-"""
-
-# ========= LOGIQUE =========
-def _now_utc(): return datetime.now(timezone.utc)
-def _parse_iso(s): return datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+def _parse_iso(s):
+    return datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
 
 def _token_valid(token):
     now = _now_utc()
@@ -149,8 +112,13 @@ def _token_valid(token):
                 return t
     return None
 
-def _html(s): return Response(s, mimetype="text/html; charset=utf-8")
+def _html(s: str):
+    # Remplace l'usage de Response (non importé) par make_response
+    resp = make_response(s)
+    resp.headers["Content-Type"] = "text/html; charset=utf-8"
+    return resp
 
+# ========= ROUTES =========
 @app.get("/")
 def login_get():
     return _html(LOGIN_HTML.format(bg_url=BG_URL, message="", lang="fr"))
@@ -168,31 +136,52 @@ def login_post():
 def guide():
     if not session.get("ok"):
         return redirect(url_for("login_get"))
-    return _html(GUIDE_HTML.format(bg_url=BG_URL, logout_url=url_for("logout"),
-                                   ssid=WIFI_SSID, pwd=WIFI_PASS, auth=WIFI_AUTH))
+    return _html(GUIDE_HTML.format(
+        bg_url=BG_URL,
+        logout_url=url_for("logout"),
+        ssid=WIFI_SSID, pwd=WIFI_PASS, auth=WIFI_AUTH
+    ))
 
 @app.get("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# Nouvelles pages
+# ------- RUBRIQUES (rendent des templates) -------
 @app.get("/restaurants")
-def restaurants(): return _html(RESTAURANTS_HTML)
+def restaurants():
+    if not session.get("ok"):
+        return redirect(url_for("login_get"))
+    return render_template("restaurants.html")
 
 @app.get("/visites")
-def visites(): return _html(VISITES_HTML)
+def visites():
+    if not session.get("ok"):
+        return redirect(url_for("login_get"))
+    return render_template("visites.html")
 
 @app.get("/sorties")
-def sorties(): return _html(SORTIES_HTML)
+def sorties():
+    if not session.get("ok"):
+        return redirect(url_for("login_get"))
+    return render_template("sorties.html")
 
-# PWA fichiers
+@app.get("/wifi")
+def wifi():
+    if not session.get("ok"):
+        return redirect(url_for("login_get"))
+    return render_template("wifi.html")
+
+# ------- PWA -------
 @app.get("/manifest.webmanifest")
 def manifest():
-    return Response("""{"name":"Guide","short_name":"Guide","start_url":"/",
+    return make_response(
+        """{"name":"Guide","short_name":"Guide","start_url":"/",
 "display":"standalone","background_color":"#0b1736","theme_color":"#0b1736"}""",
-    mimetype="application/manifest+json")
+        200,
+        {"Content-Type": "application/manifest+json"}
+    )
 
 @app.get("/service-worker.js")
 def sw():
-    return Response("self.addEventListener('fetch', e=>{});", mimetype="text/javascript")
+    return make_response("self.addEventListener('fetch', e=>{});", 200, {"Content-Type": "text/javascript"})
