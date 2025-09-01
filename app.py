@@ -1,9 +1,7 @@
-# app.py — Portail sécurisé Airbnb Guide (Flask + Tailwind + PWA)
-
 from datetime import datetime, timezone
 from flask import (
     Flask, request, redirect, url_for, session,
-    make_response, render_template
+    make_response, render_template, send_from_directory
 )
 
 app = Flask(__name__)
@@ -32,6 +30,9 @@ LOGIN_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Accès au guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#0b1736">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
   <div class="max-w-4xl mx-auto px-4 pt-10 pb-16">
@@ -65,12 +66,14 @@ LOGIN_HTML = """<!doctype html>
       </div>
     </div>
   </div>
+  <script>
+    if ('serviceWorker' in navigator) {{
+      navigator.serviceWorker.register('/service-worker.js');
+    }}
+  </script>
 </body>
 </html>
 """
-<link rel="manifest" href="/static/manifest.webmanifest">
-<meta name="theme-color" content="#1e40af">
-<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 
 GUIDE_HTML = """<!doctype html>
 <html lang="fr">
@@ -78,6 +81,9 @@ GUIDE_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#0b1736">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
   <div class="max-w-6xl mx-auto px-4 pt-8 pb-16">
@@ -109,7 +115,6 @@ GUIDE_HTML = """<!doctype html>
       <div class="bg-white rounded-2xl shadow p-6">
         <h2 class="text-lg font-semibold mb-3">📶 Wi-Fi</h2>
 
-        <!-- deux colonnes -->
         <div class="grid md:grid-cols-2 gap-4 items-center">
           <div class="text-[15px]">
             <div>Réseau : <b>{ssid}</b></div>
@@ -180,7 +185,6 @@ GUIDE_HTML = """<!doctype html>
 
     </section>
 
-    <!-- Footer -->
     <footer class="mt-8 text-center text-xs text-slate-500">
       Instant Roméon • Quartier d’Endoume • Marseille 7<sup>e</sup>
     </footer>
@@ -190,13 +194,14 @@ GUIDE_HTML = """<!doctype html>
   <script>
     const WIFI_TEXT = `WIFI:T:{auth};S:{ssid};P:{pwd};;`;
     new QRCode(document.getElementById("qrbox"), {{ "text": WIFI_TEXT, "width": 180, "height": 180 }});
+
+    if ('serviceWorker' in navigator) {{
+      navigator.serviceWorker.register('/service-worker.js');
+    }}
   </script>
 </body>
 </html>
 """
-<link rel="manifest" href="/static/manifest.webmanifest">
-<meta name="theme-color" content="#1e40af">
-<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 
 # ========= UTIL & AUTH =========
 def _now_utc():
@@ -282,14 +287,7 @@ def numeros():
     return render_template("numeros.html")
 
 # ------- PWA -------
-@app.get("/manifest.webmanifest")
-def manifest():
-    return make_response(
-        """{"name":"Guide","short_name":"Guide","start_url":"/",
-"display":"standalone","background_color":"#0b1736","theme_color":"#0b1736"}""",
-        200,
-        {"Content-Type": "application/manifest+json"}
-    )
+# manifest déjà placé dans /static/manifest.webmanifest → pas besoin de route spéciale
 
 @app.get("/service-worker.js")
 def sw():
