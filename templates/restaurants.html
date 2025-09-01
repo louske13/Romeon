@@ -3,29 +3,163 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Restaurants</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>Mes restos du coin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
-    .wrap{max-width:900px;margin:0 auto;padding:40px 20px}
-    .card{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:24px}
-    .muted{color:#6b7280}
-    .grid{display:grid;gap:16px}
-    @media(min-width:768px){.grid{grid-template-columns:repeat(3,1fr)}}
+    :root { --bg:#f6f7fb; --text:#0f172a; --muted:#6b7280; --card:#ffffff; --link:#1e40af; }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:40px 20px}
+    h1{margin:0 0 8px;font-size:32px} .lead{margin:0 0 24px;color:var(--muted)}
+    .grid{display:grid;gap:18px} @media(min-width:768px){.grid{grid-template-columns:repeat(3,1fr)}}
+    .card{background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:24px}
+    .title{font-size:22px;margin:0;color:var(--text)} .italic{color:#64748b;font-style:italic;margin:6px 0 0}
+    .p{margin:12px 0 0;line-height:1.6}
+    .thumbs{display:grid;gap:10px;margin-top:14px} @media(min-width:768px){.thumbs{grid-template-columns:repeat(3,1fr)}}
+    .thumbs img{width:100%;height:160px;object-fit:cover;border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+    .info{margin-top:12px;color:#334155;font-size:14px;line-height:1.6}
+    .info a{color:var(--link);text-decoration:underline}
+    .back{display:inline-block;margin-top:26px}
+    .section-title{margin:26px 0 6px;font-weight:600;color:#334155}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+    .chip{background:#e2e8f0;color:#334155;border-radius:999px;padding:6px 10px;font-size:12px}
   </style>
 </head>
-<body style="background:#f6f7fb">
+<body>
   <div class="wrap">
-    <h1 style="font-size:28px;margin:0 0 8px">🍴 Mes restos du coin</h1>
-    <p class="muted" style="margin:0 0 24px">Du plus proche au plus loin. (On remplira ici le contenu que tu as rédigé.)</p>
 
-    <!-- Exemple : on mettra tes blocs ici -->
-    <div class="card">
-      <p class="muted" style="margin:0">Contenu à venir (La Scuderia, Le Baron Perché, Chez Michel, ...)</p>
+    <h1>🍴 Mes restos du coin</h1>
+    <p class="lead">Je suis du quartier (Endoume) et je vous partage mes bonnes adresses, du plus proche au plus loin.
+      Un peu d’humour, un brin de poésie, et surtout des endroits où on mange bien sans chichi.</p>
+
+    <!-- Filtres (facultatif) -->
+    <div class="chips">
+      <span class="chip">🟢 Très proche</span>
+      <span class="chip">🟡 À pied</span>
+      <span class="chip">🚌 Bus 83</span>
+      <span class="chip">🌅 Vue / coucher de soleil</span>
     </div>
 
-    <p style="margin-top:24px"><a href="/guide">← Retour au guide</a></p>
+    <!-- La Scuderia -->
+    <article class="card" id="scuderia">
+      <h2 class="title">La Scuderia <span style="font-size:14px;color:#64748b">— 5–7 min à pied</span></h2>
+      <p class="italic">"Des produits frais de qualité, t’as pas fini de saliver une fois arrivé !"</p>
+      <p class="p">
+        Livraison à la maison <b>ou</b> sur un bout de rocher du <b>Vallon</b>…
+        le bonheur sur un bout de carton et la larme quand tombent les derniers rayons du <b>“blond”</b>.
+        Ah, t’aimerais t’installer hein ? <i>Attends de voir le foncier !</i> Pas grave, tu reviendras à <b>l’instant Roméon</b> !
+      </p>
+      <div class="thumbs">
+        <img src="/static/images/scuderia1.jpg" alt="La Scuderia - pizza">
+        <img src="/static/images/scuderia2.jpg" alt="La Scuderia - four/pâte">
+        <img src="/static/images/scuderia3.jpg" alt="La Scuderia - coucher de soleil au Vallon">
+      </div>
+      <div class="info">
+        🚶 1 rue Turcon → 133 rue d’Endoume (5–7 min) •
+        🌐 <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=La+Scuderia+Marseille">Voir sur Google Maps</a> •
+        📞 <a href="tel:+33981641587">09 81 64 15 87</a>
+      </div>
+    </article>
+
+    <!-- Le Baron Perché -->
+    <article class="card" id="baron">
+      <h2 class="title">Le Baron Perché <span style="font-size:14px;color:#64748b">— ~5 min à pied</span></h2>
+      <p class="italic">"Le bonheur à deux pas de la maison, presque une pièce annexe du salon !"</p>
+      <p class="p">
+        N’y débarque pas en pantoufle quand même, oh ! Ici c’est <b>Endoume pur jus</b> :
+        carte courte qui fait pas semblant, produits droits, service avec l’accent.
+        On s’y sent vite <b>comme un voisin</b>. Si tu peux, demande le <b>patio</b> : la petite cour au calme, c’est la cerise sur la tapenade.
+      </p>
+      <div class="thumbs">
+        <img src="/static/images/baron1.jpg" alt="Baron Perché - patio">
+        <img src="/static/images/baron2.jpg" alt="Baron Perché - plat du marché">
+        <img src="/static/images/baron3.jpg" alt="Baron Perché - intérieur">
+      </div>
+      <div class="info">
+        🚶 ~5 min à pied depuis 1 rue Turcon •
+        🌐 <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Le+Baron+Perch%C3%A9+Marseille">Voir sur Google Maps</a>
+      </div>
+    </article>
+
+    <!-- Chez Michel -->
+    <article class="card" id="michel">
+      <h2 class="title">Chez Michel (Catalans) <span style="font-size:14px;color:#64748b">— ~10–12 min à pied</span></h2>
+      <p class="italic">"La bouillabaisse racontée comme au temps des anciens."</p>
+      <p class="p">
+        Ici, la <b>Méditerranée</b> mijote pour de vrai : bouillons parfumés, poissons du coin, service dans les règles.
+        Une maison de <b>tradition</b> à deux pas de la plage des <b>Catalans</b>. Si tu veux un souvenir marseillais qui reste, c’est là.
+      </p>
+      <div class="thumbs">
+        <img src="/static/images/michel1.jpg" alt="Chez Michel - bouillabaisse">
+        <img src="/static/images/michel2.jpg" alt="Chez Michel - salle">
+        <img src="/static/images/michel3.jpg" alt="Chez Michel - détail">
+      </div>
+      <div class="info">
+        🚶 ~10–12 min à pied — 1 rue Turcon → Catalans •
+        🌐 <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Chez+Michel+Marseille">Voir sur Google Maps</a>
+      </div>
+    </article>
+
+    <!-- Chez Marinette -->
+    <article class="card" id="marinette">
+      <h2 class="title">Chez Marinette <span style="font-size:14px;color:#64748b">— ~12–15 min à pied</span></h2>
+      <p class="italic">"Une cuisine qui sourit, des assiettes qui donnent envie de partager."</p>
+      <p class="p">
+        <b>Bistronomie</b> à taille humaine : produits du marché, accents du sud, vins bien choisis.
+        Ambiance chaleureuse, on s’y sent vite à l’aise — comme chez des amis du quartier.
+      </p>
+      <div class="thumbs">
+        <img src="/static/images/marinette1.jpg" alt="Chez Marinette - plat">
+        <img src="/static/images/marinette2.jpg" alt="Chez Marinette - salle">
+        <img src="/static/images/marinette3.jpg" alt="Chez Marinette - détail">
+      </div>
+      <div class="info">
+        🚶 ~12–15 min à pied — secteur Saint-Victor/Endoume •
+        🌐 <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Chez+Marinette+Marseille">Voir sur Google Maps</a>
+      </div>
+    </article>
+
+    <!-- Chez Fonfon -->
+    <article class="card" id="fonfon">
+      <h2 class="title">Chez Fonfon (Vallon des Auffes) <span style="font-size:14px;color:#64748b">— ~18–20 min à pied</span></h2>
+      <p class="italic">"Le Vallon, la mer, et la bouillabaisse en habit de lumière."</p>
+      <p class="p">
+        <b>Fonfon</b>, c’est l’institution posée au bord de l’eau, dans la carte postale du <b>Vallon des Auffes</b> :
+        barques, maisons serrées, lumière dorée… et dans l’assiette, une bouillabaisse qui fait chavirer.
+        <i>“m’y voilà, enfin j’suis bieng là.”</i>
+      </p>
+      <div class="thumbs">
+        <img src="/static/images/fonfon1.jpg" alt="Chez Fonfon - Vallon des Auffes">
+        <img src="/static/images/fonfon2.jpg" alt="Chez Fonfon - bouillabaisse">
+        <img src="/static/images/fonfon3.jpg" alt="Chez Fonfon - terrasse">
+      </div>
+      <div class="info">
+        🚶 ~18–20 min à pied (ou 🚌 bus 83) — depuis 1 rue Turcon •
+        🌐 <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Chez+Fonfon+Marseille">Voir sur Google Maps</a>
+      </div>
+    </article>
+
+    <!-- Les Grandes Halles du Vieux-Port -->
+    <article class="card" id="halles">
+      <h2 class="title">Les Grandes Halles du Vieux-Port <span style="font-size:14px;color:#64748b">— ~22–25 min à pied</span></h2>
+      <p class="italic">"Un tour du port en quelques stands : chacun trouve son bonheur."</p>
+      <p class="p">
+        Grand espace <b>convivial</b> au cœur du Vieux-Port : poisson grillé, pizza napolitaine, tapas, douceurs…
+        On pioche, on partage, on regarde le port vivre — simple et efficace, surtout en groupe.
+      </p>
+      <div class="thumbs">
+        <img src="/static/images/halles1.jpg" alt="Grandes Halles - stands">
+        <img src="/static/images/halles2.jpg" alt="Grandes Halles - ambiance">
+        <img src="/static/images/halles3.jpg" alt="Grandes Halles - terrasse">
+      </div>
+      <div class="info">
+        🚶 ~22–25 min à pied (ou 🚌 bus 83 → Vieux-Port) •
+        🌐 <a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Grandes+Halles+du+Vieux+Port+Marseille">Voir sur Google Maps</a>
+      </div>
+    </article>
+
+    <a class="back" href="/guide">← Retour au guide</a>
   </div>
 </body>
 </html>
