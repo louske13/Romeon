@@ -68,6 +68,9 @@ LOGIN_HTML = """<!doctype html>
 </body>
 </html>
 """
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#1e40af">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 
 GUIDE_HTML = """<!doctype html>
 <html lang="fr">
@@ -191,6 +194,9 @@ GUIDE_HTML = """<!doctype html>
 </body>
 </html>
 """
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#1e40af">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 
 # ========= UTIL & AUTH =========
 def _now_utc():
