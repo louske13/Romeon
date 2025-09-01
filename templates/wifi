@@ -1,0 +1,21 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wi-Fi</title>
+<style>body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial} .wrap{max-width:900px;margin:0 auto;padding:40px 20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:24px} .muted{color:#6b7280} .row{display:flex;gap:12px;flex-wrap:wrap}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"></head>
+<body style="background:#f6f7fb"><div class="wrap">
+<h1 style="font-size:28px;margin:0 0 8px">📶 Wi-Fi de la maison</h1>
+<div class="card">
+  <p style="margin:0 0 8px">Touchez pour vous connecter automatiquement :</p>
+  <p style="margin:0 0 12px"><a id="wifiLink" href="#">Se connecter au Wi-Fi</a></p>
+  <p class="muted" style="margin:0">Ou utilisez le QR code affiché sur la carte.</p>
+</div>
+<p style="margin-top:24px"><a href="/guide">← Retour au guide</a></p>
+<script>
+  // Exemple: remplace SSID/PASS par les tiens si besoin
+  const ssid = "Maison_Romeon", pass = "votre_mdp_wifi";
+  const uri = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+  document.getElementById('wifiLink').setAttribute('href', uri);
+</script>
+</div></body></html>
