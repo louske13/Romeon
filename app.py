@@ -151,13 +151,14 @@ GUIDE_HTML = """<!doctype html>
     </footer>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     const WIFI_TEXT = `WIFI:T:{auth};S:{ssid};P:{pwd};;`;
-    new QRCode(document.getElementById("qrbox"), { text: WIFI_TEXT, width: 180, height: 180 });
+    new QRCode(document.getElementById("qrbox"), {{ "text": WIFI_TEXT, "width": 180, "height": 180 }});
   </script>
 </body>
 </html>
+
 """
 
 # ========= UTIL & AUTH =========
