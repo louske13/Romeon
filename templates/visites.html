@@ -1,11 +1,233 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Visites</title>
-<style>body{margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial} .wrap{max-width:900px;margin:0 auto;padding:40px 20px}
-.card{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:24px} .muted{color:#6b7280}</style>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"></head>
-<body style="background:#f6f7fb"><div class="wrap">
-<h1 style="font-size:28px;margin:0 0 8px">🏛️ Visites</h1><p class="muted" style="margin:0 0 24px">Lieux et monuments à découvrir…</p>
-<div class="card"><p class="muted" style="margin:0">Contenu à venir</p></div>
-<p style="margin-top:24px"><a href="/guide">← Retour au guide</a></p>
-</div></body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>À visiter – Instant Roméon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f6f7fb;--text:#0f172a;--muted:#6b7280;--card:#fff;--link:#1e40af}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:40px 20px}
+    h1{margin:0 0 10px;font-size:32px} .lead{margin:0 0 24px;color:var(--muted)}
+    h2.section{margin:34px 0 8px;font-size:20px;color:#334155}
+    .card{background:var(--card);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);padding:24px}
+    .title{font-size:22px;margin:0;color:var(--text)}
+    .italic{color:#64748b;font-style:italic;margin:6px 0 0}
+    .p{margin:12px 0 0;line-height:1.6}
+    .thumbs{display:grid;gap:10px;margin-top:14px} @media(min-width:768px){.thumbs{grid-template-columns:repeat(3,1fr)}}
+    .thumbs img{width:100%;height:160px;object-fit:cover;border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+    .info{margin-top:12px;color:#334155;font-size:14px;line-height:1.6}
+    .info a{color:var(--link);text-decoration:underline}
+    .tips{margin-top:10px;background:#f1f5f9;border-radius:12px;padding:10px 12px;color:#334155;font-size:14px}
+    .back{display:inline-block;margin-top:26px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+    .chip{background:#e2e8f0;color:#334155;border-radius:999px;padding:6px 10px;font-size:12px;text-decoration:none}
+    .grid-gap{display:grid;gap:18px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <h1>🏛️ À visiter autour de l’appart</h1>
+    <p class="lead">
+      De <b>Notre-Dame</b> aux criques de <b>Malmousque</b>, en passant par le <b>Vallon des Auffes</b>, le <b>Panier</b>,
+      les <b>Îles du Frioul</b> ou <b>Les Goudes</b>… tout se fait tranquille depuis <b>1 rue Turcon</b> (souvent à pied, sinon bus 83).
+      Et si vous avez la bougeotte : les <b>Calanques</b>, le <b>Vélodrome</b>, les musées, les bateaux pour les îles… bref,
+      de quoi vous régaler selon la météo et l’envie du jour.
+    </p>
+
+    <!-- Onglets -->
+    <div class="chips">
+      <a class="chip" href="#exterieur">🌞 Activités extérieures</a>
+      <a class="chip" href="#interieur">🎟️ Activités intérieures</a>
+      <a class="chip" href="#sunset">🌅 Coucher de soleil</a>
+      <a class="chip" href="#baignade">💧 Baignade</a>
+    </div>
+
+    <!-- ===================== EXTÉRIEUR ===================== -->
+    <h2 id="exterieur" class="section">🌞 Activités extérieures</h2>
+    <div class="grid-gap">
+
+      <!-- Plage des Catalans -->
+      <article class="card" id="catalans">
+        <h3 class="title">Plage des Catalans <span style="font-size:14px;color:#64748b">— ~10 min à pied</span></h3>
+        <p class="italic">"Ici, on se baigne avant même que le café ait fini de couler."</p>
+        <p class="p">Première plage de la ville, connue depuis le XIXᵉ siècle pour ses bains. 
+          Aujourd’hui encore, c’est la version express du bonheur : trois pas de sable, un plongeon,
+          et la Méditerranée remet l’horloge à l’heure du sud.
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/catalans/1.jpeg" alt="Catalans 1">
+          <img src="/static/images/visites/catalans/2.jpeg" alt="Catalans 2">
+          <img src="/static/images/visites/catalans/3.jpeg" alt="Catalans 3">
+        </div>
+        <div class="info">
+          📍 Plage des Catalans, 13007 Marseille •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/9H9VtfRHGEm">Google Maps</a>
+        </div>
+      </article>
+
+      <!-- Malmousque -->
+      <article class="card" id="malmousque">
+        <h3 class="title">Malmousque <span style="font-size:14px;color:#64748b">— ~15 min à pied</span></h3>
+        <p class="italic">"Un hameau posé sur l’eau : cartes postales à chaque coin de ruelle."</p>
+        <p class="p">Cabanons, ruelles serrées, bleu profond… Ici, on marche doucement, comme si on dérangeait la mer dans sa sieste. 
+          Un coin-frère du paradis, rien que ça.
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/malmousque/1.jpeg" alt="Malmousque 1">
+          <img src="/static/images/visites/malmousque/2.jpeg" alt="Malmousque 2">
+          <img src="/static/images/visites/malmousque/3.jpeg" alt="Malmousque 3">
+        </div>
+        <div class="info">
+          📍 Malmousque, 13007 Marseille •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/Yk9qX4Zr89p">Google Maps</a>
+        </div>
+      </article>
+
+      <!-- Vallon des Auffes -->
+      <article class="card" id="vallon">
+        <h3 class="title">Vallon des Auffes <span style="font-size:14px;color:#64748b">— ~20 min à pied</span></h3>
+        <p class="italic">"Quand le soleil se couche ici, la lumière devient marseillaise."</p>
+        <p class="p">Petit port né pour les pêcheurs et les “auffiers” (fabricants de cordage), 
+          aujourd’hui carte postale vivante : arches, barques et bouillabaisse. 
+          À l’heure dorée, même les pierres applaudissent.
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/vallon/1.jpeg" alt="Vallon 1">
+          <img src="/static/images/visites/vallon/2.jpeg" alt="Vallon 2">
+          <img src="/static/images/visites/vallon/3.jpeg" alt="Vallon 3">
+        </div>
+        <div class="info">
+          📍 Vallon des Auffes, 13007 Marseille •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/JyJux2YHvN62">Google Maps</a>
+        </div>
+      </article>
+
+      <!-- Panier -->
+      <article class="card" id="panier">
+        <h3 class="title">Quartier du Panier <span style="font-size:14px;color:#64748b">— ~25 min à pied</span></h3>
+        <p class="italic">"Ruelles serrées, grands sourires, et l’art qui déborde des murs."</p>
+        <p class="p">Le plus vieux quartier de Marseille. Du savon aux ateliers d’artistes, 
+          on y remonte le temps en descente. On se perd exprès et on écoute la ville parler avec les mains : 
+          “Oh fan, t’as vu comme c’est beau là !”
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/panier/1.jpeg" alt="Panier 1">
+          <img src="/static/images/visites/panier/2.jpeg" alt="Panier 2">
+          <img src="/static/images/visites/panier/3.jpeg" alt="Panier 3">
+        </div>
+        <div class="info">
+          📍 Quartier du Panier, 13002 Marseille •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/FsM52yWrNcu">Google Maps</a>
+        </div>
+      </article>
+
+      <!-- Frioul -->
+      <article class="card" id="frioul">
+        <h3 class="title">Îles du Frioul <span style="font-size:14px;color:#64748b">— bateau Vieux-Port</span></h3>
+        <p class="italic">"Deux ronds de caillou jetés dans le bleu, et tout devient vacances."</p>
+        <p class="p">Le bateau part du Vieux-Port et file vers l’archipel : forts, criques translucides, vent salé. 
+          Une parenthèse hors du temps, avec du soleil plein les poches en souvenir.
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/frioul/1.jpeg" alt="Frioul 1">
+          <img src="/static/images/visites/frioul/2.jpeg" alt="Frioul 2">
+          <img src="/static/images/visites/frioul/3.jpeg" alt="Frioul 3">
+        </div>
+        <div class="info">
+          📍 Départ : Vieux-Port, Marseille •
+          ⛴️ <a target="_blank" href="https://www.frioul-if-express.com/">Horaires & billets</a> •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/tBdgwRbYb142">Google Maps</a>
+        </div>
+      </article>
+
+      <!-- Goudes -->
+      <article class="card" id="goudes">
+        <h3 class="title">Les Goudes <span style="font-size:14px;color:#64748b">— bus/voiture</span></h3>
+        <p class="italic">"Le bout du monde marseillais : rien qu’un rocher, la mer, et l’envie d’y rester."</p>
+        <p class="p">Ancien village de pêcheurs, toujours cabanon dans l’âme. Falaises blanches, bleu profond, romarin au vent. 
+          Si le mistral parle fort, laisse-le te coiffer : tu feras local.
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/goudes/1.jpeg" alt="Goudes 1">
+          <img src="/static/images/visites/goudes/2.jpeg" alt="Goudes 2">
+          <img src="/static/images/visites/goudes/3.jpeg" alt="Goudes 3">
+        </div>
+        <div class="info">
+          📍 Les Goudes, 13008 Marseille •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/bV25zR4n4h42">Google Maps</a>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- ===================== INTÉRIEUR ===================== -->
+    <h2 id="interieur" class="section">🎟️ Activités intérieures</h2>
+    <div class="grid-gap">
+
+      <!-- MuCEM -->
+      <article class="card" id="mucem">
+        <h3 class="title">MuCEM & Fort Saint-Jean <span style="font-size:14px;color:#64748b">— ~25–30 min à pied</span></h3>
+        <p class="italic">"Pierres anciennes, dentelle de béton : la mer fait le lien."</p>
+        <p class="p">Le Fort Saint-Jean surveille l’entrée du port depuis le XVIIᵉ siècle. 
+          Le MuCEM, inauguré en 2013, relie l’histoire méditerranéenne aux questions d’aujourd’hui.
+          On passe des passerelles aux expositions, des pierres aux panoramas : ici, le passé et le futur discutent au bord de l’eau.
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/mucem/1.jpeg" alt="MuCEM 1">
+          <img src="/static/images/visites/mucem/2.jpeg" alt="MuCEM 2">
+          <img src="/static/images/visites/mucem/3.jpeg" alt="MuCEM 3">
+        </div>
+        <div class="info">
+          📍 1 Esplanade J4, 13002 Marseille •
+          🎟️ <a target="_blank" href="https://www.mucem.org/">Site officiel</a> •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/8Rjcj8LPuDR2">Google Maps</a>
+        </div>
+      </article>
+
+      <!-- Cosquer -->
+      <article class="card" id="cosquer">
+        <h3 class="title">Grotte Cosquer Méditerranée <span style="font-size:14px;color:#64748b">— Villa Méditerranée</span></h3>
+        <p class="italic">"Un voyage sous la mer… sans se mouiller."</p>
+        <p class="p">Réplique d’une grotte préhistorique découverte sous la mer par Henri Cosquer. 
+          Dans la Villa Méditerranée, vous entrez dans un monde d’il y a 30 000 ans : mains négatives, chevaux, phoques…
+          Une plongée scientifique et poétique.
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/cosquer/1.jpeg" alt="Cosquer 1">
+          <img src="/static/images/visites/cosquer/2.jpeg" alt="Cosquer 2">
+          <img src="/static/images/visites/cosquer/3.jpeg" alt="Cosquer 3">
+        </div>
+        <div class="info">
+          📍 Villa Méditerranée, 13002 Marseille •
+          🎟️ <a target="_blank" href="https://grotte-cosquer.com/">Site officiel</a> •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/qjbd1u4x6C62">Google Maps</a>
+        </div>
+      </article>
+
+      <!-- Vélodrome -->
+      <article class="card" id="velodrome">
+        <h3 class="title">Stade Vélodrome <span style="font-size:14px;color:#64748b">— métro/bus</span></h3>
+        <p class="italic">"Cathédrale de bruit : quand ça chante, même les nuages mettent l’écharpe."</p>
+        <p class="p">Temple des soirs OM et visites guidées le reste du temps. Architecture volante et pelouse parfaite.
+        </p>
+        <div class="thumbs">
+          <img src="/static/images/visites/velodrome/1.jpeg" alt="Vélodrome 1">
+          <img src="/static/images/visites/velodrome/2.jpeg" alt="Vélodrome 2">
+          <img src="/static/images/visites/velodrome/3.jpeg" alt="Vélodrome 3">
+        </div>
+        <div class="info">
+          📍 3 Boulevard Michelet, 13008 Marseille •
+          🎟️ <a target="_blank" href="https://www.orangevelodrome.com/">Site officiel</a> •
+          🗺️ <a target="_blank" href="https://goo.gl/maps/x1xJPr7os3Q2">Google Maps</a>
+        </div>
+      </article>
+
+    </div>
+
+    <a class="back" href="/guide">← Retour au guide</a>
+  </div>
+</body>
+</html>
