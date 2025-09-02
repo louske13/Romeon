@@ -86,6 +86,14 @@ GUIDE_HTML = Template("""<!doctype html>
 <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
+
+  <!-- Bandeau blanc texte bleu -->
+  <div class="bg-white text-blue-700 py-2 text-sm overflow-hidden border-b border-slate-200">
+    <div class="animate-marquee whitespace-nowrap">
+      🌤️ Météo Marseille : 28°C, ciel bleu — ⚓ "Oh fan de chichourle, t’as vu la Bonne Mère ?" — 🍷 Bienvenue à l’Instant Roméon !
+    </div>
+  </div>
+
   <div class="max-w-6xl mx-auto px-4 pt-8 pb-16">
 
     <div class="flex items-center justify-between gap-4 flex-wrap">
@@ -165,6 +173,18 @@ GUIDE_HTML = Template("""<!doctype html>
       Instant Roméon • Quartier d’Endoume • Marseille 7<sup>e</sup>
     </footer>
   </div>
+
+  <style>
+    @keyframes marquee {
+      0%   { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .animate-marquee {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 20s linear infinite;
+    }
+  </style>
 
   <script>
     if ('serviceWorker' in navigator) {
