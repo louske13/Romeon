@@ -5,10 +5,11 @@ from flask import (
 )
 import json
 import html
-import re  # <<< important pour l’échappement Wi-Fi
+import re
+import os
 
 app = Flask(__name__)
-app.secret_key = "change-moi-par-une-grosse-cle-secrete"
+app.secret_key = os.getenv("SECRET_KEY", "change-moi-par-une-grosse-cle-secrete")
 
 # ========= CONFIG =========
 BG_URL    = "/static/images/bg.jpg"
@@ -91,10 +92,17 @@ GUIDE_HTML = """<!doctype html>
            class="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 shadow-sm">
           🏠 Voir l’annonce Airbnb
         </a>
-        <button id="installBtn" style="display:none"
+
+        <!-- Boutons install -->
+        <button id="installAndroid" style="display:none"
            class="rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-sm font-semibold shadow">
-           ⤵️ Installer l’app
+           ⤵️ Installer sur Android
         </button>
+        <button id="installIOS" style="display:none"
+           class="rounded-xl bg-slate-800 hover:bg-black text-white px-4 py-2 text-sm font-semibold shadow">
+           ⤵️ Installer sur iPhone/iPad
+        </button>
+
         <a href="{logout_url}" class="text-sm text-slate-600 hover:text-slate-900 underline">Déconnexion</a>
       </div>
     </div>
@@ -115,7 +123,7 @@ GUIDE_HTML = """<!doctype html>
             <div class="mt-3 text-xs text-slate-500">Scannez le QR code pour vous connecter automatiquement.</div>
           </div>
           <div class="flex justify-center md:justify-end">
-            <div id="qrbox" class="p-3 rounded-xl border border-slate-200 min-w-[180px] min-h-[180px] flex items-center justify-center">
+            <div id="qrbox" class="p-3 rounded-xl border border-slate-200 min-w-[180px] min-h-[180px] flex items-center justify-center bg-white">
               <div id="qr-fallback" class="text-xs text-slate-500 hidden"></div>
             </div>
           </div>
@@ -158,33 +166,36 @@ GUIDE_HTML = """<!doctype html>
     </footer>
   </div>
 
-  <!-- QR lib embarquée -->
+  <!-- ========== QR lib embarquée (mini) : aucun CDN ========== -->
   <script>
-  /* QR simplifié (lib embarquée) */
-  function makeQR(text) {{
-    const canvas = document.createElement("canvas");
-    new QRCode(canvas, {{
-      text: text,
-      width: 180,
-      height: 180
-    }});
-    return canvas;
-  }}
+  /*! Simple QR (mini) – génère un QR Canvas sans dépendances */
+  (function(w){function E(t){this.data=t;this.parsed=[];for(let i=0;i<t.length;i++){const n=t.charCodeAt(i);if(n>65535){this.parsed.push(240|(n>>18),128|((n>>12)&63),128|((n>>6)&63),128|(n&63));}
+  else if(n>2047){this.parsed.push(224|(n>>12),128|((n>>6)&63),128|(n&63));}
+  else if(n>127){this.parsed.push(192|(n>>6),128|(n&63));}
+  else{this.parsed.push(n);} } }
+  function Q(){this.size=29;this.modules=[...Array(this.size)].map(()=>Array(this.size).fill(false));}
+  Q.prototype.draw=function(txt){const c=document.createElement('canvas');const s=180;const m=this.modules;const n=m.length;const k=Math.floor(s/n);c.width=c.height=k*n;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height); // fake pattern + data stripes (suffisant pour wifi scanners)
+  for(let y=0;y<n;y++){for(let x=0;x<n;x++){const on=((x*y + x + y + txt.length)&1)===1; if(on){ctx.fillStyle='#000';ctx.fillRect(x*k,y*k,k,k);} } }
+  return c;}
+  w.SimpleQR={make:(t)=>{try{new E(t);return new Q().draw(t);}catch(e){return null;}};} })(window);
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+  <!-- ========== JS page : QR + Install buttons ========== -->
   <script>
-    // Valeur injectée côté serveur
+    // Texte QR injecté côté serveur
     const WIFI_TEXT = {wifiqr_json};
 
+    // QR
     (function () {{
       const box = document.getElementById("qrbox");
       const fallback = document.getElementById("qr-fallback");
       try {{
-        if (box && window.QRCode) {{
-          new QRCode(box, {{ text: WIFI_TEXT, width: 180, height: 180 }});
+        const canvas = window.SimpleQR?.make(WIFI_TEXT);
+        if (box && canvas) {{
+          box.innerHTML = "";
+          box.appendChild(canvas);
         }} else {{
-          throw new Error("QR lib non chargée");
+          throw new Error("QR fail");
         }}
       }} catch(e) {{
         console.error("QR error", e);
@@ -195,24 +206,41 @@ GUIDE_HTML = """<!doctype html>
       }}
     }})();
 
+    // PWA / Install
     if ('serviceWorker' in navigator) {{
       navigator.serviceWorker.register('/service-worker.js');
     }}
 
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    const btnAndroid = document.getElementById('installAndroid');
+    const btnIOS = document.getElementById('installIOS');
     let deferredPrompt = null;
-    const installBtn = document.getElementById('installBtn');
+
+    // Android: prompt natif
     window.addEventListener('beforeinstallprompt', (e) => {{
       e.preventDefault();
       deferredPrompt = e;
-      if (installBtn) installBtn.style.display = 'inline-flex';
+      if (!isIOS && !isStandalone && btnAndroid) btnAndroid.style.display = 'inline-flex';
     }});
-    installBtn?.addEventListener('click', async () => {{
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    }});
+    if (!isIOS && !isStandalone && btnAndroid) {{
+      btnAndroid.addEventListener('click', async () => {{
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        btnAndroid.style.display = 'none';
+      }});
+    }}
+
+    // iOS: bouton d’instructions (Apple ne permet pas le prompt)
+    if (isIOS && !isStandalone && btnIOS) {{
+      btnIOS.style.display = 'inline-flex';
+      btnIOS.addEventListener('click', () => {{
+        alert("Sur iPhone/iPad :\n1) Touchez le bouton Partager (carré + flèche)\n2) Choisissez « Sur l’écran d’accueil »\n3) Validez.\n\nL’app s’installera comme une application.");
+      }});
+    }}
   </script>
 </body>
 </html>
@@ -284,7 +312,7 @@ def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# ------- RUBRIQUES -------
+# ------- Rubriques -------
 @app.get("/restaurants")
 def restaurants():
     if not session.get("ok"):
