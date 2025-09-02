@@ -120,6 +120,14 @@ GUIDE_HTML = Template("""<!doctype html>
                  class="p-3 rounded-xl border border-slate-200 w-[180px] h-[180px] bg-white" />
           </div>
         </div>
+
+        <!-- Bouton Installer l’app -->
+        <div class="mt-6 text-center">
+          <button id="installAppBtn"
+            class="rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-sm font-semibold shadow">
+            📲 Télécharger l’application
+          </button>
+        </div>
       </div>
 
       <div class="bg-white rounded-2xl shadow p-6">
@@ -162,6 +170,27 @@ GUIDE_HTML = Template("""<!doctype html>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js');
     }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('installAppBtn');
+    installBtn.style.display = 'none';
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-flex';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+      } else {
+        alert("ℹ️ Pour installer sur iPhone :\\n1. Bouton Partager (carré + flèche)\\n2. Choisissez 'Sur l’écran d’accueil'");
+      }
+    });
   </script>
 </body>
 </html>
