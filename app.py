@@ -10,13 +10,15 @@ app.secret_key = "change-moi-par-une-grosse-cle-secrete"
 
 # ========= CONFIG =========
 BG_URL   = "/static/images/bg.jpg"
+
+# VRAI RÉSEAU WI-FI
 WIFI_SSID = "Linstant Roméon"
 WIFI_PASS = "@Romeon13007"
 WIFI_AUTH = "WPA"
 
 APP_ADDRESS = "1 rue Turcon, 13007 Marseille"
 MAPS_URL = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007+Marseille"
-AIRBNB_URL = "https://www.airbnb.fr/rooms/1366485756382394689?guests=1&adults=1&s=67&unique_share_id=55c1ae1a-669d-45ae-a6b7-62f3e00fccc4"
+AIRBNB_URL = "https://www.airbnb.fr/rooms/1366485756382394689"
 
 TOKENS = [
     {"token": "Marseille25", "lang": "fr",
@@ -30,9 +32,9 @@ LOGIN_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Accès au guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/manifest.webmanifest">
-<meta name="theme-color" content="#0b1736">
-<link rel="apple-touch-icon" href="/manifest-icon-apple.png">
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#1e40af">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
   <div class="max-w-4xl mx-auto px-4 pt-10 pb-16">
@@ -75,9 +77,9 @@ GUIDE_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/manifest.webmanifest">
-<meta name="theme-color" content="#0b1736">
-<link rel="apple-touch-icon" href="/manifest-icon-apple.png">
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#1e40af">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
   <div class="max-w-6xl mx-auto px-4 pt-8 pb-16">
@@ -157,7 +159,11 @@ GUIDE_HTML = """<!doctype html>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     const WIFI_TEXT = `WIFI:T:{auth};S:{ssid};P:{pwd};;`;
-    new QRCode(document.getElementById("qrbox"), {{ "text": WIFI_TEXT, "width": 180, "height": 180 }});
+    new QRCode(document.getElementById("qrbox"), {
+      text: WIFI_TEXT,
+      width: 180,
+      height: 180
+    });
 
     if ('serviceWorker' in navigator) {{
       navigator.serviceWorker.register('/service-worker.js');
@@ -204,22 +210,23 @@ def _html(s: str):
     return resp
 
 # ========= ROUTES =========
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        token = (request.form.get("token") or "").strip()
-        match = _token_valid(token)
-        if match:
-            session["ok"] = True
-            return redirect(url_for("guide"))
-        return _html(LOGIN_HTML.format(bg_url=BG_URL, message="Code invalide", lang="fr"))
-
+@app.get("/")
+def login_get():
     return _html(LOGIN_HTML.format(bg_url=BG_URL, message="", lang="fr"))
+
+@app.post("/")
+def login_post():
+    token = (request.form.get("token") or "").strip()
+    match = _token_valid(token)
+    if match:
+        session["ok"] = True
+        return redirect(url_for("guide"))
+    return _html(LOGIN_HTML.format(bg_url=BG_URL, message="Code invalide", lang="fr"))
 
 @app.get("/guide")
 def guide():
     if not session.get("ok"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login_get"))
     return _html(GUIDE_HTML.format(
         bg_url=BG_URL,
         logout_url=url_for("logout"),
@@ -232,59 +239,40 @@ def guide():
 @app.get("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("login_get"))
 
 # ------- RUBRIQUES -------
 @app.get("/restaurants")
 def restaurants():
     if not session.get("ok"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login_get"))
     return render_template("restaurants.html")
 
 @app.get("/visites")
 def visites():
     if not session.get("ok"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login_get"))
     return render_template("visites.html")
 
 @app.get("/sorties")
 def sorties():
     if not session.get("ok"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login_get"))
     return render_template("sorties.html")
 
 @app.get("/commerces")
 def commerces():
     if not session.get("ok"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login_get"))
     return render_template("commerces.html")
 
 @app.get("/numeros")
 def numeros():
     if not session.get("ok"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login_get"))
     return render_template("numeros.html")
 
-# ------- PWA: manifest + SW -------
-@app.get("/manifest.webmanifest")
-def manifest():
-    data = {
-        "name": "Guide Instant Roméon",
-        "short_name": "Roméon",
-        "start_url": "/guide",
-        "scope": "/",
-        "id": "/guide",
-        "display": "standalone",
-        "background_color": "#f6f7fb",
-        "theme_color": "#1e40af",
-        "icons": [
-            {"src": "/static/icons/Android.png", "sizes": "192x192", "type": "image/png"},
-            {"src": "/static/icons/Android.png", "sizes": "512x512", "type": "image/png"},
-            {"src": "/static/icons/apple.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable"}
-        ]
-    }
-    return make_response(json.dumps(data), 200, {"Content-Type": "application/manifest+json; charset=utf-8"})
-
+# ------- PWA: Service Worker -------
 @app.get("/service-worker.js")
 def sw():
     js = (
