@@ -9,8 +9,6 @@ import re
 from io import BytesIO
 import base64
 from string import Template
-
-# QR côté serveur
 import qrcode
 from qrcode.constants import ERROR_CORRECT_M
 
@@ -20,7 +18,7 @@ app.secret_key = os.getenv("SECRET_KEY", "change-moi-par-une-grosse-cle-secrete"
 # ========= CONFIG =========
 WIFI_SSID = "Linstant Roméon"
 WIFI_PASS = "@Romeon13007"
-WIFI_AUTH = "WPA"  # "WPA" | "WEP" | "" (open)
+WIFI_AUTH = "WPA"
 
 APP_ADDRESS = "1 rue Turcon, 13007 Marseille"
 MAPS_URL   = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007+Marseille"
@@ -31,14 +29,14 @@ TOKENS = [
      "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
 ]
 
-# ========= HTML (Templates avec $placeholders) =========
+# ========= HTML =========
 LOGIN_HTML = Template("""<!doctype html>
 <html lang="$lang">
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Accès au guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/manifest.webmanifest">
+<link rel="manifest" href="/static/manifest.webmanifest">
 <meta name="theme-color" content="#0b1736">
 <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -83,7 +81,7 @@ GUIDE_HTML = Template("""<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/manifest.webmanifest">
+<link rel="manifest" href="/static/manifest.webmanifest">
 <meta name="theme-color" content="#0b1736">
 <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -190,18 +188,15 @@ def _html(s: str):
     return resp
 
 def _wifi_escape(value: str) -> str:
-    """Échappe \ ; , : " comme recommandé pour les QR Wi-Fi."""
     return re.sub(r'([\\;,:"])', r'\\\1', value)
 
 def _wifi_qr_text(ssid: str, pwd: str, auth: str) -> str:
     ssid_e = _wifi_escape(ssid)
     pwd_e  = _wifi_escape(pwd)
     auth_e = _wifi_escape(auth or "")
-    # format standard
     return f"WIFI:T:{auth_e};S:{ssid_e};P:{pwd_e};;"
 
 def _qr_png_base64(text: str, box_size: int = 6, border: int = 2) -> str:
-    """Génère un QR PNG (base64) pour le texte donné."""
     qr = qrcode.QRCode(
         version=None,
         error_correction=ERROR_CORRECT_M,
@@ -235,7 +230,7 @@ def guide():
         return redirect(url_for("login_get"))
 
     wifi_text = _wifi_qr_text(WIFI_SSID, WIFI_PASS, WIFI_AUTH)
-    qr_b64 = _qr_png_base64(wifi_text, box_size=6, border=1)  # ≈ 180px
+    qr_b64 = _qr_png_base64(wifi_text, box_size=6, border=1)
 
     html_out = GUIDE_HTML.substitute(
         logout_url=url_for("logout"),
@@ -253,7 +248,7 @@ def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# ------- Rubriques (tes templates existent déjà) -------
+# ------- Rubriques -------
 @app.get("/restaurants")
 def restaurants():
     if not session.get("ok"):
