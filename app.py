@@ -86,14 +86,6 @@ GUIDE_HTML = Template("""<!doctype html>
 <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
-
-  <!-- Bandeau blanc texte bleu -->
-  <div class="bg-white text-blue-700 py-2 text-sm overflow-hidden border-b border-slate-200">
-    <div id="ticker" class="animate-marquee whitespace-nowrap">
-      ⏳ Chargement de la météo de Marseille…
-    </div>
-  </div>
-
   <div class="max-w-6xl mx-auto px-4 pt-8 pb-16">
 
     <div class="flex items-center justify-between gap-4 flex-wrap">
@@ -103,10 +95,6 @@ GUIDE_HTML = Template("""<!doctype html>
            class="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 shadow-sm">
           🏠 Voir l’annonce Airbnb
         </a>
-        <button id="installAppBtn"
-           class="rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-sm font-semibold shadow">
-           ⤵️ Installer l’app
-        </button>
         <a href="$logout_url" class="text-sm text-slate-600 hover:text-slate-900 underline">Déconnexion</a>
       </div>
     </div>
@@ -131,6 +119,14 @@ GUIDE_HTML = Template("""<!doctype html>
                  alt="QR Wi-Fi"
                  class="p-3 rounded-xl border border-slate-200 w-[180px] h-[180px] bg-white" />
           </div>
+        </div>
+
+        <!-- Bouton Installer l’app -->
+        <div class="mt-6 text-center">
+          <button id="installAppBtn"
+            class="rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-sm font-semibold shadow">
+            📲 Télécharger l’application
+          </button>
         </div>
       </div>
 
@@ -170,33 +166,21 @@ GUIDE_HTML = Template("""<!doctype html>
     </footer>
   </div>
 
-  <style>
-    @keyframes marquee {
-      0%   { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-    .animate-marquee {
-      display: inline-block;
-      padding-left: 100%;
-      animation: marquee 22s linear infinite;
-    }
-  </style>
-
   <script>
-    // Service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js');
     }
 
-    // Bouton Installer l’app
     let deferredPrompt;
     const installBtn = document.getElementById('installAppBtn');
     installBtn.style.display = 'none';
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
       installBtn.style.display = 'inline-flex';
     });
+
     installBtn.addEventListener('click', async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -204,43 +188,9 @@ GUIDE_HTML = Template("""<!doctype html>
         deferredPrompt = null;
         installBtn.style.display = 'none';
       } else {
-        alert("ℹ️ iPhone : Partager → 'Sur l’écran d’accueil'");
+        alert("ℹ️ Pour installer sur iPhone :\\n1. Bouton Partager (carré + flèche)\\n2. Choisissez 'Sur l’écran d’accueil'");
       }
     });
-
-    // ===== Bandeau météo (Open-Meteo, Marseille) =====
-    const ticker = document.getElementById('ticker');
-    async function setWeatherTicker() {
-      try {
-        const url = "https://api.open-meteo.com/v1/forecast?latitude=43.2965&longitude=5.3698&current_weather=true&timezone=auto";
-        const res = await fetch(url, { cache: "no-store" });
-        const data = await res.json();
-        const cw = data.current_weather;
-        const temp = Math.round(cw.temperature);
-        const wind = Math.round(cw.windspeed);
-        const code = cw.weathercode;
-        const label = ({
-          0:"ciel clair", 1:"beau temps", 2:"partiellement nuageux", 3:"nuageux",
-          45:"brume", 48:"givre", 51:"bruine", 53:"bruine",
-          55:"bruine", 61:"pluie faible", 63:"pluie", 65:"forte pluie",
-          71:"neige fine", 73:"neige", 75:"forte neige",
-          80:"averses", 81:"averses", 82:"fortes averses",
-          95:"orage", 96:"orage", 99:"gros orage"
-        })[code] || "météo clémente";
-
-        const jokes = [
-          '⚓ "Oh fan de chichourle !"',
-          '🐟 "Ici, même les poissons ont l’accent !"',
-          '🌊 "Cap sur Malmousque pour le coucher de soleil !"'
-        ];
-        const joke = jokes[Math.floor(Math.random()*jokes.length)];
-        ticker.textContent = `🌤️ Marseille : ${temp}°C, ${label} • 💨 Vent ${wind} km/h • ${joke}`;
-      } catch (e) {
-        ticker.textContent = '🌤️ Marseille : météo indisponible — 🍷 Bon séjour à l’Instant Roméon !';
-      }
-    }
-    setWeatherTicker();
-    setInterval(setWeatherTicker, 30 * 60 * 1000); // toutes les 30 min
   </script>
 </body>
 </html>
