@@ -4,6 +4,7 @@ from flask import (
     make_response, render_template
 )
 import json
+import html
 
 app = Flask(__name__)
 app.secret_key = "change-moi-par-une-grosse-cle-secrete"
@@ -113,7 +114,7 @@ GUIDE_HTML = """<!doctype html>
             <div class="mt-3 text-xs text-slate-500">Scannez le QR code pour vous connecter automatiquement.</div>
           </div>
           <div class="flex justify-center md:justify-end">
-            <div id="qrbox" class="p-3 rounded-xl border border-slate-200"></div>
+            <div id="qrbox" class="p-3 rounded-xl border border-slate-200 min-w-[180px] min-h-[180px]"></div>
           </div>
         </div>
       </div>
@@ -154,20 +155,28 @@ GUIDE_HTML = """<!doctype html>
     </footer>
   </div>
 
+  <!-- QRCode lib -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-    const WIFI_TEXT = `WIFI:T:{auth};S:{ssid};P:{pwd};;`;
-    new QRCode(document.getElementById("qrbox"), {{
-      text: WIFI_TEXT,
-      width: 180,
-      height: 180
-    }});
+    // Valeur injectée côté serveur, sûre (JSON)
+    const WIFI_TEXT = {wifiqr_json};
 
+    // Génération du QR
+    try {{
+      const el = document.getElementById("qrbox");
+      if (el && window.QRCode) {{
+        new QRCode(el, {{ text: WIFI_TEXT, width: 180, height: 180 }});
+      }}
+    }} catch(e) {{
+      console.error("QR error", e);
+    }}
+
+    // SW pour l’installation
     if ('serviceWorker' in navigator) {{
       navigator.serviceWorker.register('/service-worker.js');
     }}
 
-    // Bouton "Installer l’app"
+    // Bouton installer l’app
     let deferredPrompt = null;
     const installBtn = document.getElementById('installBtn');
     window.addEventListener('beforeinstallprompt', (e) => {{
@@ -225,10 +234,18 @@ def login_post():
 def guide():
     if not session.get("ok"):
         return redirect(url_for("login_get"))
+
+    # Compose le texte du QR côté serveur (et JSON-encode pour l’insérer sans souci d’accents/guillemets)
+    wifi_qr = f"WIFI:T:{WIFI_AUTH};S:{WIFI_SSID};P:{WIFI_PASS};;"
+    wifiqr_json = json.dumps(wifi_qr, ensure_ascii=False)
+
     return _html(GUIDE_HTML.format(
         bg_url=BG_URL,
         logout_url=url_for("logout"),
-        ssid=WIFI_SSID, pwd=WIFI_PASS, auth=WIFI_AUTH,
+        ssid=html.escape(WIFI_SSID),
+        pwd=html.escape(WIFI_PASS),
+        auth=html.escape(WIFI_AUTH),
+        wifiqr_json=wifiqr_json,
         airbnb=AIRBNB_URL,
         maps=MAPS_URL,
         address=APP_ADDRESS
@@ -270,7 +287,7 @@ def numeros():
         return redirect(url_for("login_get"))
     return render_template("numeros.html")
 
-# ------- PWA: manifest + SW -------
+# ------- PWA: service worker -------
 @app.get("/service-worker.js")
 def sw():
     js = (
