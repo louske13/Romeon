@@ -17,7 +17,7 @@ app.secret_key = os.getenv("SECRET_KEY", "change-moi-par-une-grosse-cle-secrete"
 BG_URL    = "/static/images/bg.jpg"
 WIFI_SSID = "Linstant Roméon"
 WIFI_PASS = "@Romeon13007"
-WIFI_AUTH = "WPA"  # "WPA" | "WEP" | "" (open)
+WIFI_AUTH = "WPA"
 
 APP_ADDRESS = "1 rue Turcon, 13007 Marseille"
 MAPS_URL   = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007+Marseille"
@@ -28,7 +28,7 @@ TOKENS = [
      "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
 ]
 
-# ========= HTML (avec string.Template: $placeholders) =========
+# ========= HTML =========
 LOGIN_HTML = Template("""<!doctype html>
 <html lang="$lang">
 <meta charset="utf-8" />
@@ -94,16 +94,6 @@ GUIDE_HTML = Template("""<!doctype html>
            class="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 shadow-sm">
           🏠 Voir l’annonce Airbnb
         </a>
-
-        <button id="installAndroid" style="display:none"
-           class="rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-sm font-semibold shadow">
-           ⤵️ Installer sur Android
-        </button>
-        <button id="installIOS" style="display:none"
-           class="rounded-xl bg-slate-800 hover:bg-black text-white px-4 py-2 text-sm font-semibold shadow">
-           ⤵️ Installer sur iPhone/iPad
-        </button>
-
         <a href="$logout_url" class="text-sm text-slate-600 hover:text-slate-900 underline">Déconnexion</a>
       </div>
     </div>
@@ -124,9 +114,7 @@ GUIDE_HTML = Template("""<!doctype html>
             <div class="mt-3 text-xs text-slate-500">Scannez le QR code pour vous connecter automatiquement.</div>
           </div>
           <div class="flex justify-center md:justify-end">
-            <div id="qrbox" class="p-3 rounded-xl border border-slate-200 min-w-[180px] min-h-[180px] flex items-center justify-center bg-white">
-              <div id="qr-fallback" class="text-xs text-slate-500 hidden"></div>
-            </div>
+            <div id="qrbox" class="p-3 rounded-xl border border-slate-200 min-w-[180px] min-h-[180px]"></div>
           </div>
         </div>
       </div>
@@ -167,72 +155,13 @@ GUIDE_HTML = Template("""<!doctype html>
     </footer>
   </div>
 
-  <!-- Lib QR inline (ultra simple) -->
-  <script>
-  (function(w){function E(t){this.data=t;this.parsed=[];for(let i=0;i<t.length;i++){const n=t.charCodeAt(i);if(n>65535){this.parsed.push(240|(n>>18),128|((n>>12)&63),128|((n>>6)&63),128|(n&63));}
-  else if(n>2047){this.parsed.push(224|(n>>12),128|((n>>6)&63),128|(n&63));}
-  else if(n>127){this.parsed.push(192|(n>>6),128|(n&63));}
-  else{this.parsed.push(n);} } }
-  function Q(){this.size=29;this.modules=[...Array(this.size)].map(()=>Array(this.size).fill(false));}
-  Q.prototype.draw=function(txt){const c=document.createElement('canvas');const s=180;const m=this.modules;const n=m.length;const k=Math.floor(s/n);c.width=c.height=k*n;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
-  for(let y=0;y<n;y++){for(let x=0;x<n;x++){const on=((x*y + x + y + txt.length)&1)===1; if(on){ctx.fillStyle='#000';ctx.fillRect(x*k,y*k,k,k);} } } return c;}
-  w.SimpleQR={make:(t)=>{try{new E(t);return new Q().draw(t);}catch(e){return null;}};} })(window);
-  </script>
-
+  <!-- QRCode.js fiable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     const WIFI_TEXT = $wifiqr_json;
-
-    (function () {
-      const box = document.getElementById("qrbox");
-      const fallback = document.getElementById("qr-fallback");
-      try {
-        const canvas = window.SimpleQR?.make(WIFI_TEXT);
-        if (box && canvas) {
-          box.innerHTML = "";
-          box.appendChild(canvas);
-        } else {
-          throw new Error("QR fail");
-        }
-      } catch(e) {
-        console.error("QR error", e);
-        if (fallback) {
-          fallback.classList.remove("hidden");
-          fallback.textContent = "QR indisponible. Code Wi-Fi : " + WIFI_TEXT;
-        }
-      }
-    })();
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js');
-    }
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-    const btnAndroid = document.getElementById('installAndroid');
-    const btnIOS = document.getElementById('installIOS');
-    let deferredPrompt = null;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (!isIOS && !isStandalone && btnAndroid) btnAndroid.style.display = 'inline-flex';
-    });
-    if (!isIOS && !isStandalone && btnAndroid) {
-      btnAndroid.addEventListener('click', async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        btnAndroid.style.display = 'none';
-      });
-    }
-
-    if (isIOS && !isStandalone && btnIOS) {
-      btnIOS.style.display = 'inline-flex';
-      btnIOS.addEventListener('click', () => {
-        alert("Sur iPhone/iPad :\\n1) Bouton Partager (carré + flèche)\\n2) « Sur l’écran d’accueil »\\n3) Validez.");
-      });
+    const el = document.getElementById("qrbox");
+    if (el && window.QRCode) {
+      new QRCode(el, { text: WIFI_TEXT, width: 180, height: 180 });
     }
   </script>
 </body>
@@ -261,12 +190,6 @@ def _html(s: str):
 
 def _wifi_escape(value: str) -> str:
     return re.sub(r'([\\;,:"])', r'\\\1', value)
-
-# ========= Error handler (temporaire pour debug) =========
-@app.errorhandler(Exception)
-def _err(e):
-    tb = traceback.format_exc()
-    return make_response(f"<h1>Erreur</h1><pre>{html.escape(tb)}</pre>", 500)
 
 # ========= Routes =========
 @app.get("/")
@@ -309,7 +232,7 @@ def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# ------- Rubriques (tes templates existent déjà) -------
+# ------- Rubriques -------
 @app.get("/restaurants")
 def restaurants():
     if not session.get("ok"):
@@ -340,7 +263,7 @@ def numeros():
         return redirect(url_for("login_get"))
     return render_template("numeros.html")
 
-# ------- PWA: service worker -------
+# ------- PWA -------
 @app.get("/service-worker.js")
 def sw():
     js = (
