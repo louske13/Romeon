@@ -1,7 +1,7 @@
 {
   "name": "Guide Instant Roméon",
   "short_name": "Roméon",
-  "start_url": "/",
+  "start_url": "/guide"
   "display": "standalone",
   "background_color": "#f6f7fb",
   "theme_color": "#1e40af",
