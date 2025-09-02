@@ -16,7 +16,7 @@ WIFI_AUTH = "WPA"
 
 APP_ADDRESS = "1 rue Turcon, 13007 Marseille"
 MAPS_URL = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007+Marseille"
-AIRBNB_URL = "https://www.airbnb.fr/hosting/listings/editor/1366485756382394689/view-your-space"
+AIRBNB_URL = "https://www.airbnb.fr/rooms/1366485756382394689?guests=1&adults=1&s=67&unique_share_id=55c1ae1a-669d-45ae-a6b7-62f3e00fccc4"
 
 TOKENS = [
     {"token": "Marseille25", "lang": "fr",
