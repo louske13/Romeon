@@ -3,21 +3,24 @@ from flask import (
     Flask, request, redirect, url_for, session,
     make_response, render_template
 )
-import json
 import html
-import re
 import os
+import re
+from io import BytesIO
+import base64
 from string import Template
-import traceback
+
+# QR côté serveur
+import qrcode
+from qrcode.constants import ERROR_CORRECT_M
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "change-moi-par-une-grosse-cle-secrete")
 
 # ========= CONFIG =========
-BG_URL    = "/static/images/bg.jpg"
 WIFI_SSID = "Linstant Roméon"
 WIFI_PASS = "@Romeon13007"
-WIFI_AUTH = "WPA"
+WIFI_AUTH = "WPA"  # "WPA" | "WEP" | "" (open)
 
 APP_ADDRESS = "1 rue Turcon, 13007 Marseille"
 MAPS_URL   = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007+Marseille"
@@ -28,7 +31,7 @@ TOKENS = [
      "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
 ]
 
-# ========= HTML =========
+# ========= HTML (Templates avec $placeholders) =========
 LOGIN_HTML = Template("""<!doctype html>
 <html lang="$lang">
 <meta charset="utf-8" />
@@ -109,12 +112,14 @@ GUIDE_HTML = Template("""<!doctype html>
         <h2 class="text-lg font-semibold mb-3">📶 Wi-Fi</h2>
         <div class="grid md:grid-cols-2 gap-4 items-center">
           <div class="text-[15px]">
-            <div>Réseau : <b>$ssid</b></div>
-            <div>Mot de passe : <b>$pwd</b></div>
+            <div>Réseau : <b>$ssid_h</b></div>
+            <div>Mot de passe : <b>$pwd_h</b></div>
             <div class="mt-3 text-xs text-slate-500">Scannez le QR code pour vous connecter automatiquement.</div>
           </div>
           <div class="flex justify-center md:justify-end">
-            <div id="qrbox" class="p-3 rounded-xl border border-slate-200 min-w-[180px] min-h-[180px]"></div>
+            <img src="data:image/png;base64,$qr_b64"
+                 alt="QR Wi-Fi"
+                 class="p-3 rounded-xl border border-slate-200 w-[180px] h-[180px] bg-white" />
           </div>
         </div>
       </div>
@@ -155,13 +160,9 @@ GUIDE_HTML = Template("""<!doctype html>
     </footer>
   </div>
 
-  <!-- QRCode.js fiable -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-    const WIFI_TEXT = $wifiqr_json;
-    const el = document.getElementById("qrbox");
-    if (el && window.QRCode) {
-      new QRCode(el, { text: WIFI_TEXT, width: 180, height: 180 });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js');
     }
   </script>
 </body>
@@ -189,7 +190,30 @@ def _html(s: str):
     return resp
 
 def _wifi_escape(value: str) -> str:
+    """Échappe \ ; , : " comme recommandé pour les QR Wi-Fi."""
     return re.sub(r'([\\;,:"])', r'\\\1', value)
+
+def _wifi_qr_text(ssid: str, pwd: str, auth: str) -> str:
+    ssid_e = _wifi_escape(ssid)
+    pwd_e  = _wifi_escape(pwd)
+    auth_e = _wifi_escape(auth or "")
+    # format standard
+    return f"WIFI:T:{auth_e};S:{ssid_e};P:{pwd_e};;"
+
+def _qr_png_base64(text: str, box_size: int = 6, border: int = 2) -> str:
+    """Génère un QR PNG (base64) pour le texte donné."""
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=ERROR_CORRECT_M,
+        box_size=box_size,
+        border=border
+    )
+    qr.add_data(text)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = BytesIO()
+    img.save(buf, format="PNG")
+    return base64.b64encode(buf.getvalue()).decode("ascii")
 
 # ========= Routes =========
 @app.get("/")
@@ -210,20 +234,17 @@ def guide():
     if not session.get("ok"):
         return redirect(url_for("login_get"))
 
-    ssid = _wifi_escape(WIFI_SSID)
-    pwd  = _wifi_escape(WIFI_PASS)
-    auth = _wifi_escape(WIFI_AUTH or "")
-    wifi_qr = f"WIFI:T:{auth};S:{ssid};P:{pwd};;"
-    wifiqr_json = json.dumps(wifi_qr, ensure_ascii=False)
+    wifi_text = _wifi_qr_text(WIFI_SSID, WIFI_PASS, WIFI_AUTH)
+    qr_b64 = _qr_png_base64(wifi_text, box_size=6, border=1)  # ≈ 180px
 
     html_out = GUIDE_HTML.substitute(
         logout_url=url_for("logout"),
-        ssid=html.escape(WIFI_SSID),
-        pwd=html.escape(WIFI_PASS),
+        ssid_h=html.escape(WIFI_SSID),
+        pwd_h=html.escape(WIFI_PASS),
         airbnb=AIRBNB_URL,
         maps=MAPS_URL,
         address=APP_ADDRESS,
-        wifiqr_json=wifiqr_json
+        qr_b64=qr_b64
     )
     return _html(html_out)
 
@@ -232,7 +253,7 @@ def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# ------- Rubriques -------
+# ------- Rubriques (tes templates existent déjà) -------
 @app.get("/restaurants")
 def restaurants():
     if not session.get("ok"):
@@ -263,7 +284,7 @@ def numeros():
         return redirect(url_for("login_get"))
     return render_template("numeros.html")
 
-# ------- PWA -------
+# ------- PWA: service worker -------
 @app.get("/service-worker.js")
 def sw():
     js = (
