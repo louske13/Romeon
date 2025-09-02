@@ -9,20 +9,21 @@
   "theme_color": "#1e40af",
   "icons": [
     {
-      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAB9klEQVR4nO3dwQ2CMBRF0WgY8e0nQonw8r6f1p3JrVbY4kQ6gk8Gm8QmYb2p9U9d5gqJ2k8z6m7oQAAAAAAAAAAAAAAAAAAAH8Ew2Gf1n4z8bLZxT5H9U4P1Q2W5lFZc4b3nKkY2T7w1y8Hc0z1bE1Wzv6jT4Q9lHhWm3KQm1t0Q0k3f2dQz1f4s9ZbH7hC0b2aHqk5yq4Xr7z+9J1v3q2p6y1VJ2c5p8bq3VvX3Z6s2J6f7s8cBz9Qwqv7m8d3qk0b1q9WZpX3qk1f2a6dM2b1c8b3p4YVf3m9bP1d8Z1f4q8ZJq6v3c7nYqj3K2cV7vVj7jJq3AAAAAAAAAAAAAAAAAAAAwCq0m6qS7Wk8m4cP7HhI1Vh1m8Q0k2VYv0n4Qv0kJm5wS3yL6c3bG0y5b1g7s7k4o2K6E0q2h1H8m4u7a0m7Wbq8lq4Wm5z1d5E7c7qP9lVx2j5VvH+0b8m3g7n8Jz0Xv7a9b9q5W7j5b8o6a8n6U2q8W7Z9P3b7AAAAAAAAAAAAAAAAAAAAAH4E9w6w8p8dBv3Y4k4AAAAAElFTkSuQmCC",
+      "src": "/static/icons/Android.png",
       "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAACa0lEQVR4nO3dwQ3CMBRF0fR0mOQm0hQKJgPq7q7g3w3qE6f1b1e1iB2qg1zv4cI2Zk8m4f5AAAAAAAAAAAAAAAAAAAAAAB4q4y0c0v0h+2m1wq3b7c2Cxfm4m5Ggqf1l7b7i7lV0s4u8YfH0b8rV+9u2k5i8r1j1o7vG7x2+7n2bO9b3mKqf3vQn7fUu3Z9b7r5m6+z0qJr6f3m7rV1n4v2c7e3d0kI0b4r7c3m8d1gJz7u5ZK2dGfP3K9w4AAAAAAAAAAAAAAAAAAAAAIJr9VQe9kLQbqFf6u5mQqv2Y9f0y3v7o4qZ9m3n6c2m5r6y2m4t5q5y7s6n5u6v6t7v8v9w0w1x2y3z4+P2Oq7YH9i8f0Y8u7m2c6f4r2e5p3o2n1m0l",
-      "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAABc3X2xAAABmUlEQVR4nO3dwQ2EMBBF0V3g0g0mYQdS2R1Q0m4bQq3q8f7J9c5mZJ8vJwAAAAAAAAAAAAAAAAAAAABwF5z3l2m6k7rj9c2h4r5uWmV7b3e+o9fE6bVwqj7bJ7x5a4d3b8fD6mW0rN6n5x6r3s6j5r2l6p3m5o2n5p3o4q5p6q7r8s9t0u1v2w3x4y5z6+H2bQ6aH9d7f1Z7u3m5k2j4q2p3o2n1m0l",
-      "sizes": "180x180",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/Android.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/apple.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }
