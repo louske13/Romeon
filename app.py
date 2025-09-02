@@ -5,7 +5,7 @@ from flask import (
 )
 import json
 import html
-import re
+import re  # <<< important pour l’échappement Wi-Fi
 
 app = Flask(__name__)
 app.secret_key = "change-moi-par-une-grosse-cle-secrete"
@@ -158,27 +158,33 @@ GUIDE_HTML = """<!doctype html>
     </footer>
   </div>
 
-  <!-- QR lib embarquée (QRCodeJS minifié) -->
+  <!-- QR lib embarquée -->
   <script>
-  /* qrcode.js (min) – embarqué pour éviter tout blocage CDN */
-  !function(o){function u(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var t=0,e=this.data.length;t<e;t++){var r=[],n=this.data.charCodeAt(t);n>65536?(r[0]=240|(1835008&n)>>>18,r[1]=128|(258048&n)>>>12,r[2]=128|(4032&n)>>>6,r[3]=128|63&n):2048<n?(r[0]=224|(61440&n)>>>12,r[1]=128|(4032&n)>>>6,r[2]=128|63&n):128<n?(r[0]=192|(1984&n)>>>6,r[1]=128|63&n):r[0]=n,this.parsedData.push(r)}this.parsedData=Array.prototype.concat.apply([],this.parsedData)}function i(a,t){this.typeNumber=a,this.errorCorrectLevel=t,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}var c={PAD0:236,PAD1:17,MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},s={L:1,M:0,Q:3,H:2};u.prototype={getLength:function(){return this.parsedData.length},write:function(a){for(var t=0,e=this.parsedData.length;t<e;t++)a.put(this.parsedData[t],8)}},i.prototype={addData:function(a){this.dataList.push(new u(a)),this.dataCache=null},isDark:function(a,t){if(null==this.modules||a<0||this.moduleCount<=a||t<0||this.moduleCount<=t)throw new Error(a+","+t);return this.modules[a][t]},getModuleCount:function(){return this.moduleCount},make:function(){if(this.typeNumber<1)this.typeNumber=1;for(;this.typeNumber<41&&!this.isMakeable();)this.typeNumber++;this.makeImpl(!1,this.getBestMaskPattern())},isMakeable:function(){var a=this.createData(this.typeNumber,s.M);return a.length>0},makeImpl:function(a,t){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++){this.modules[e]=new Array(this.moduleCount);for(var r=0;r<this.moduleCount;r++)this.modules[e][r]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupTimingPattern(),this.setupTypeInfo(a,t),this.dataCache=this.createData(this.typeNumber,s.M),this.mapData(this.dataCache,t)},setupPositionProbePattern:function(a,t){for(var e=-1;e<=7;e++)if(!(a+e<=-1||this.moduleCount<=a+e))for(var r=-1;r<=7;r++)t+r<=-1||this.moduleCount<=t+r||(0<=e&&e<=6&&(0==r||6==r)||0<=r&&r<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=r&&r<=4)?this.modules[a+e][t+r]=!0:this.modules[a+e][t+r]=!1},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=a%2==0),null==this.modules[6][a]&&(this.modules[6][a]=a%2==0)},setupTypeInfo:function(a,t){for(var e=s.M,r=0;r<15;r++){var n=!a&&(1&r)==0;if(r<6)this.modules[r][8]=n;else if(r<8)this.modules[r+1][8]=n;else if(r<9)this.modules[8][15-r-1]=n;else if(r<15)this.modules[this.moduleCount-15+r][8]=n}for(r=0;r<15;r++){n=!a&&(1&r)==0;var o=this.moduleCount-1-8;if(r<8)this.modules[8][r]=n;else if(r<9)this.modules[15-r-1][8]=n;else if(r<15)this.modules[8][o-(15-r-1)]=n}},mapData:function(a,t){for(var e=this.moduleCount-1,r=7,n=0,o=this.moduleCount-1;0<o;o-=2){for(6==o&&o--;0<=e;e++){for(var i=0;i<2;i++)null==this.modules[o-i][e]&&(n<a.length?(this.modules[o-i][e]=(a[n]>>>r&1)==1,n++,(0==--r&&(r=7))):this.modules[o-i][e]=!1);e+=o%4==0?1:-1}e+=o%4==0?-1:1}},createData:function(a,t){var e=function(a,t){for(var e=[],r=0;r<a.length;r++){var n=a[r];e.push(n.getLength()<<10|c.MODE_8BIT_BYTE<<12);for(var o=0;o<n.getLength();o++)e.push(n.parsedData[o])}for(var i=[],s=0;s<e.length;s++)for(var u=e[s],h=7;0<=h;h--)i.push((u>>>h&1)==1?1:0);var l=Math.ceil((4*a.length+17)/8)*8;for(;i.length%8!=0;)i.push(0);for(;i.length<l;)i.push(0);for(var f=[],d=0;d<i.length;d+=8){for(var m=0,p=0;p<8;p++)m=m<<1|i[d+p];f.push(m)}return f}(this.dataList,t);return e},getBestMaskPattern:function(){return 0}};function l(a,t){var e=document.createElement("canvas"),r=e.getContext("2d");a.make();var n=a.getModuleCount(),o=180,i=Math.floor(o/n);e.width=e.height=i*n,r.clearRect(0,0,e.width,e.height);for(var s=0;s<n;s++)for(var u=0;u<n;u++)r.fillStyle=a.isDark(u,s)?"#000":"#fff",r.fillRect(u*i,s*i,i,i);return e}window.SimpleQR={{draw:function(t){try{{var e=new i(0,s.M);e.addData(t);e.make();var a=l(e);return a}}catch(n){return null}}}}();
+  /* QR simplifié (lib embarquée) */
+  function makeQR(text) {{
+    const canvas = document.createElement("canvas");
+    new QRCode(canvas, {{
+      text: text,
+      width: 180,
+      height: 180
+    }});
+    return canvas;
+  }}
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
-    // Valeur injectée côté serveur (string JSON sûre)
+    // Valeur injectée côté serveur
     const WIFI_TEXT = {wifiqr_json};
 
-    // Génération du QR (lib embarquée)
     (function () {{
       const box = document.getElementById("qrbox");
       const fallback = document.getElementById("qr-fallback");
       try {{
-        const canvas = window.SimpleQR?.draw(WIFI_TEXT);
-        if (box && canvas) {{
-          box.innerHTML = "";
-          box.appendChild(canvas);
+        if (box && window.QRCode) {{
+          new QRCode(box, {{ text: WIFI_TEXT, width: 180, height: 180 }});
         }} else {{
-          throw new Error("QR lib error");
+          throw new Error("QR lib non chargée");
         }}
       }} catch(e) {{
         console.error("QR error", e);
@@ -189,12 +195,10 @@ GUIDE_HTML = """<!doctype html>
       }}
     }})();
 
-    // SW pour l’installation
     if ('serviceWorker' in navigator) {{
       navigator.serviceWorker.register('/service-worker.js');
     }}
 
-    // Bouton installer l’app
     let deferredPrompt = null;
     const installBtn = document.getElementById('installBtn');
     window.addEventListener('beforeinstallprompt', (e) => {{
@@ -257,7 +261,6 @@ def guide():
     if not session.get("ok"):
         return redirect(url_for("login_get"))
 
-    # Compose le texte du QR côté serveur + échappements
     ssid = _wifi_escape(WIFI_SSID)
     pwd  = _wifi_escape(WIFI_PASS)
     auth = _wifi_escape(WIFI_AUTH or "")
