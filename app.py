@@ -10,15 +10,13 @@ app.secret_key = "change-moi-par-une-grosse-cle-secrete"
 
 # ========= CONFIG =========
 BG_URL   = "/static/images/bg.jpg"
-
-# VRAI RÉSEAU WI-FI
 WIFI_SSID = "Linstant Roméon"
 WIFI_PASS = "@Romeon13007"
 WIFI_AUTH = "WPA"
 
 APP_ADDRESS = "1 rue Turcon, 13007 Marseille"
 MAPS_URL = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007+Marseille"
-AIRBNB_URL = "https://www.airbnb.fr/rooms/1366485756382394689"
+AIRBNB_URL = "https://www.airbnb.fr/rooms/1366485756382394689?guests=1&adults=1&s=67&unique_share_id=55c1ae1a-669d-45ae-a6b7-62f3e00fccc4"
 
 TOKENS = [
     {"token": "Marseille25", "lang": "fr",
@@ -32,8 +30,8 @@ LOGIN_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Accès au guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/static/manifest.webmanifest">
-<meta name="theme-color" content="#1e40af">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0b1736">
 <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
@@ -77,8 +75,8 @@ GUIDE_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/static/manifest.webmanifest">
-<meta name="theme-color" content="#1e40af">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0b1736">
 <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
@@ -159,11 +157,11 @@ GUIDE_HTML = """<!doctype html>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
     const WIFI_TEXT = `WIFI:T:{auth};S:{ssid};P:{pwd};;`;
-    new QRCode(document.getElementById("qrbox"), {
+    new QRCode(document.getElementById("qrbox"), {{
       text: WIFI_TEXT,
       width: 180,
       height: 180
-    });
+    }});
 
     if ('serviceWorker' in navigator) {{
       navigator.serviceWorker.register('/service-worker.js');
@@ -272,7 +270,7 @@ def numeros():
         return redirect(url_for("login_get"))
     return render_template("numeros.html")
 
-# ------- PWA: Service Worker -------
+# ------- PWA: manifest + SW -------
 @app.get("/service-worker.js")
 def sw():
     js = (
