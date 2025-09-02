@@ -24,9 +24,6 @@ APP_ADDRESS = "1 rue Turcon, 13007 Marseille"
 MAPS_URL   = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007+Marseille"
 AIRBNB_URL = "https://www.airbnb.fr/rooms/1366485756382394689?guests=1&adults=1&s=67&unique_share_id=55c1ae1a-669d-45ae-a6b7-62f3e00fccc4"
 
-# Marseille coords (Open-Meteo)
-LAT, LON = 43.2965, 5.3698
-
 TOKENS = [
     {"token": "Marseille25", "lang": "fr",
      "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
@@ -90,7 +87,7 @@ GUIDE_HTML = Template("""<!doctype html>
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
 
-  <!-- Bandeau blanc texte bleu (toujours visible) -->
+  <!-- Bandeau blanc texte bleu -->
   <div class="bg-white text-blue-700 py-2 text-sm overflow-hidden border-b border-slate-200">
     <div id="ticker" class="animate-marquee whitespace-nowrap">
       ⏳ Chargement de la météo de Marseille…
@@ -106,6 +103,10 @@ GUIDE_HTML = Template("""<!doctype html>
            class="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 shadow-sm">
           🏠 Voir l’annonce Airbnb
         </a>
+        <button id="installAppBtn"
+           class="rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-sm font-semibold shadow">
+           ⤵️ Installer l’app
+        </button>
         <a href="$logout_url" class="text-sm text-slate-600 hover:text-slate-900 underline">Déconnexion</a>
       </div>
     </div>
@@ -130,14 +131,6 @@ GUIDE_HTML = Template("""<!doctype html>
                  alt="QR Wi-Fi"
                  class="p-3 rounded-xl border border-slate-200 w-[180px] h-[180px] bg-white" />
           </div>
-        </div>
-
-        <!-- Bouton Installer l’app -->
-        <div class="mt-6 text-center">
-          <button id="installAppBtn"
-            class="rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-sm font-semibold shadow">
-            📲 Télécharger l’application
-          </button>
         </div>
       </div>
 
@@ -190,7 +183,7 @@ GUIDE_HTML = Template("""<!doctype html>
   </style>
 
   <script>
-    // Service worker (PWA)
+    // Service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js');
     }
@@ -215,17 +208,16 @@ GUIDE_HTML = Template("""<!doctype html>
       }
     });
 
-    // ===== Bandeau météo dynamique (Open-Meteo, pas d'API key) =====
+    // ===== Bandeau météo (Open-Meteo, Marseille) =====
     const ticker = document.getElementById('ticker');
     async function setWeatherTicker() {
       try {
-        const url = "https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current_weather=true&timezone=auto";
+        const url = "https://api.open-meteo.com/v1/forecast?latitude=43.2965&longitude=5.3698&current_weather=true&timezone=auto";
         const res = await fetch(url, { cache: "no-store" });
         const data = await res.json();
         const cw = data.current_weather;
         const temp = Math.round(cw.temperature);
         const wind = Math.round(cw.windspeed);
-        // Mini traduction du code météo (très simple)
         const code = cw.weathercode;
         const label = ({
           0:"ciel clair", 1:"beau temps", 2:"partiellement nuageux", 3:"nuageux",
@@ -242,15 +234,13 @@ GUIDE_HTML = Template("""<!doctype html>
           '🌊 "Cap sur Malmousque pour le coucher de soleil !"'
         ];
         const joke = jokes[Math.floor(Math.random()*jokes.length)];
-
         ticker.textContent = `🌤️ Marseille : ${temp}°C, ${label} • 💨 Vent ${wind} km/h • ${joke}`;
       } catch (e) {
-        ticker.textContent = '🌤️ Marseille : météo indisponible pour le moment — 🍷 Bon séjour à l’Instant Roméon !';
+        ticker.textContent = '🌤️ Marseille : météo indisponible — 🍷 Bon séjour à l’Instant Roméon !';
       }
     }
     setWeatherTicker();
-    // rafraîchit toutes les 30 min
-    setInterval(setWeatherTicker, 30 * 60 * 1000);
+    setInterval(setWeatherTicker, 30 * 60 * 1000); // toutes les 30 min
   </script>
 </body>
 </html>
@@ -328,9 +318,7 @@ def guide():
         airbnb=AIRBNB_URL,
         maps=MAPS_URL,
         address=APP_ADDRESS,
-        qr_b64=qr_b64,
-        lat=LAT,
-        lon=LON
+        qr_b64=qr_b64
     )
     return _html(html_out)
 
