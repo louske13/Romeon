@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
 from flask import (
     Flask, request, redirect, url_for, session,
-    make_response, render_template, send_from_directory
+    make_response, render_template
 )
+import json
 
 app = Flask(__name__)
 app.secret_key = "change-moi-par-une-grosse-cle-secrete"
@@ -30,9 +31,9 @@ LOGIN_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Accès au guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/static/manifest.webmanifest">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0b1736">
-<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/manifest-icon-apple.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
   <div class="max-w-4xl mx-auto px-4 pt-10 pb-16">
@@ -81,9 +82,9 @@ GUIDE_HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Guide – Instant Roméon</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/static/manifest.webmanifest">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#0b1736">
-<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/manifest-icon-apple.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
   <div class="max-w-6xl mx-auto px-4 pt-8 pb-16">
@@ -286,9 +287,42 @@ def numeros():
         return redirect(url_for("login_get"))
     return render_template("numeros.html")
 
-# ------- PWA -------
-# manifest déjà placé dans /static/manifest.webmanifest → pas besoin de route spéciale
+# ------- PWA: manifest + SW (aucun upload nécessaire) -------
+# 1x1 PNG transparent encodé; suffisant pour l'install (les tailles déclarées guident l'OS)
+_PX1 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII="
+
+@app.get("/manifest.webmanifest")
+def manifest():
+    data = {
+        "name": "Guide Instant Roméon",
+        "short_name": "Roméon",
+        "start_url": "/guide",
+        "scope": "/",
+        "id": "/guide",
+        "display": "standalone",
+        "background_color": "#f6f7fb",
+        "theme_color": "#1e40af",
+        "icons": [
+            {"src": f"data:image/png;base64,{_PX1}", "sizes": "192x192", "type": "image/png"},
+            {"src": f"data:image/png;base64,{_PX1}", "sizes": "512x512", "type": "image/png"},
+            {"src": f"data:image/png;base64,{_PX1}", "sizes": "180x180", "type": "image/png", "purpose": "any maskable"}
+        ]
+    }
+    return make_response(json.dumps(data), 200, {"Content-Type": "application/manifest+json; charset=utf-8"})
+
+# petite icône Apple (même data); Safari lit ce lien <link rel="apple-touch-icon" ...>
+@app.get("/manifest-icon-apple.png")
+def apple_icon():
+    # renvoie le même 1x1; ça suffit pour passer l'étape d'install (tu pourras remplacer plus tard)
+    binary = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\x0bIDATx\x9cc``\x00\x00\x00\x02\x00\x01\xe2!\xbc3\x00\x00\x00\x00IEND\xaeB`\x82"
+    return make_response(binary, 200, {"Content-Type": "image/png"})
 
 @app.get("/service-worker.js")
 def sw():
-    return make_response("self.addEventListener('fetch', e=>{});", 200, {"Content-Type": "text/javascript"})
+    js = (
+        "self.addEventListener('install', e=>self.skipWaiting());"
+        "self.addEventListener('activate', e=>self.clients.claim());"
+        # fetch no-op: juste pour être présent; utile à l'eligibilité PWA
+        "self.addEventListener('fetch', e=>{});"
+    )
+    return make_response(js, 200, {"Content-Type": "text/javascript"})
