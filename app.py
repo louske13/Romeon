@@ -1,8 +1,5 @@
-yfrom datetime import datetime, timezone
-from flask import (
-    Flask, request, redirect, url_for, session,
-    make_response, render_template
-)
+from datetime import datetime, timezone
+from flask import Flask, request, redirect, url_for, session, make_response
 import html
 import os
 import re
@@ -13,7 +10,7 @@ import qrcode
 from qrcode.constants import ERROR_CORRECT_M
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "change-moi-par-une-grosse-cle-secrete")
+app.secret_key = os.getenv("SECRET_KEY", "ma-clé-ultra-secrète-1234567890")  # 👈 PASSE EN PRODUCTION
 
 # ========= CONFIG =========
 WIFI_SSID = "Linstant Roméon"
@@ -25,178 +22,52 @@ MAPS_URL   = "https://www.google.com/maps/search/?api=1&query=1+rue+Turcon+13007
 AIRBNB_URL = "https://www.airbnb.fr/rooms/1366485756382394689?guests=1&adults=1&s=67&unique_share_id=55c1ae1a-669d-45ae-a6b7-62f3e00fccc4"
 
 TOKENS = [
-    {"token": "Alessio", "lang": "fr",
-     "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
+    {"token": "Alessio", "lang": "fr", "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
 ]
 
-# ========= HTML =========
-LOGIN_HTML = Template("""<!doctype html>
-<html lang="$lang">
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+# ========= HTML TEMPLATES =========
+LOGIN_HTML = Template("""
+<!doctype html>
+<html lang="$lang"><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Accès au guide – Instant Roméon</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/static/manifest.webmanifest">
-<meta name="theme-color" content="#0b1736">
-<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
-<body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
-  <div class="max-w-4xl mx-auto px-4 pt-10 pb-16">
-    <header class="text-center mb-8">
-      <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">🏡 Instant Roméon</h1>
-      <p class="mt-3 text-slate-600 max-w-2xl mx-auto leading-relaxed">
-        Merci d'avoir choisi <b>l’Instant Roméon</b>. Ce petit guide pratique va vous simplifier la vie.
-      </p>
-    </header>
-
-    <div class="mx-auto max-w-xl bg-white/90 backdrop-blur rounded-2xl shadow-2xl p-6 md:p-8">
-      <h2 class="text-xl md:text-2xl font-semibold text-slate-900">🔒 Accès au guide</h2>
-      <p class="mt-2 text-slate-600">Entrez le mot de passe fourni par votre hôte :</p>
-
-      <form method="POST" class="mt-5 space-y-4">
-        <input name="token" placeholder="Ex. Marseille25" required autofocus
-               class="w-full rounded-xl border-2 border-slate-200 focus:border-blue-700 px-4 py-3 outline-none transition" />
-        <button type="submit"
-                class="w-full rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 font-semibold shadow">
-          Continuer
-        </button>
-      </form>
-
-      <div class="min-h-[22px] mt-3 text-center text-red-600">$message</div>
-      <div class="mt-4 text-center text-xs text-slate-500">Astuce : vous pourrez l’installer comme une application.</div>
-    </div>
+<body class="bg-slate-100 text-slate-800 p-8">
+  <div class="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
+    <h1 class="text-2xl font-semibold mb-4">🏡 Instant Roméon</h1>
+    <p class="mb-4">Entrez le mot de passe fourni par votre hôte :</p>
+    <form method="POST" class="space-y-4">
+      <input name="token" placeholder="Ex. Marseille25" required autofocus
+             class="w-full border px-4 py-2 rounded" />
+      <button type="submit" class="w-full bg-blue-700 text-white px-4 py-2 rounded">Continuer</button>
+    </form>
+    <div class="mt-3 text-red-600 text-center">$message</div>
   </div>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js');
-    }
-  </script>
 </body>
 </html>
 """)
 
-GUIDE_HTML = Template("""<!doctype html>
-<html lang="fr">
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+GUIDE_HTML = Template("""
+<!doctype html>
+<html lang="fr"><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Guide – Instant Roméon</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="/static/manifest.webmanifest">
-<meta name="theme-color" content="#0b1736">
-<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script>
-<body class="min-h-screen bg-gradient-to-br from-[#eef2ff] via-[#f7f7fb] to-[#eaf5ff] text-slate-800">
-  <div class="max-w-6xl mx-auto px-4 pt-8 pb-16">
-
-    <div class="flex items-center justify-between gap-4 flex-wrap">
-      <h1 class="text-2xl md:text-3xl font-semibold">🏡 Guide de l’appartement</h1>
-      <div class="flex items-center gap-3">
-        <a href="$airbnb" target="_blank"
-           class="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-50 shadow-sm">
-          🏠 Voir l’annonce Airbnb
-        </a>
-        <a href="$logout_url" class="text-sm text-slate-600 hover:text-slate-900 underline">Déconnexion</a>
-      </div>
-    </div>
-
-    <section class="mt-4 bg-white/90 backdrop-blur rounded-2xl shadow p-5 md:p-6">
-      <p class="leading-relaxed text-slate-700">
-        Bienvenue à <b>l’Instant Roméon</b> ! Wi-Fi en un clic, bonnes adresses, idées de balades… laissez-vous guider.
-      </p>
-    </section>
-
-    <section class="mt-6 grid md:grid-cols-2 gap-6">
-      <div class="bg-white rounded-2xl shadow p-6">
-        <h2 class="text-lg font-semibold mb-3">📶 Wi-Fi</h2>
-        <div class="grid md:grid-cols-2 gap-4 items-center">
-          <div class="text-[15px]">
-            <div>Réseau : <b>$ssid_h</b></div>
-            <div>Mot de passe : <b>$pwd_h</b></div>
-            <div class="mt-3 text-xs text-slate-500">Scannez le QR code pour vous connecter automatiquement.</div>
-          </div>
-          <div class="flex justify-center md:justify-end">
-            <img src="data:image/png;base64,$qr_b64"
-                 alt="QR Wi-Fi"
-                 class="p-3 rounded-xl border border-slate-200 w-[180px] h-[180px] bg-white" />
-          </div>
-        </div>
-
-        <!-- Bouton Installer l’app -->
-        <div class="mt-6 text-center">
-          <button id="installAppBtn"
-            class="rounded-xl bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 text-sm font-semibold shadow">
-            📲 Télécharger l’application
-          </button>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-2xl shadow p-6">
-        <h2 class="text-lg font-semibold">Rubriques</h2>
-        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <a href="/restaurants" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
-            <span class="text-xl">🍽️</span>
-            <div><div class="font-semibold group-hover:text-blue-700">Restaurants</div><div class="text-xs text-slate-500">Mes spots à deux pas & vues mer</div></div>
-          </a>
-          <a href="/visites" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
-            <span class="text-xl">🏛️</span>
-            <div><div class="font-semibold group-hover:text-blue-700">À visiter</div><div class="text-xs text-slate-500">Bonnes idées autour de l’appart</div></div>
-          </a>
-          <a href="/sorties" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
-            <span class="text-xl">🎶</span>
-            <div><div class="font-semibold group-hover:text-blue-700">Sorties</div><div class="text-xs text-slate-500">Ambiance, musique & apéros</div></div>
-          </a>
-          <a href="/commerces" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
-            <span class="text-xl">🛍️</span>
-            <div><div class="font-semibold group-hover:text-blue-700">Commerces utiles</div><div class="text-xs text-slate-500">Artisans & incontournables du quartier</div></div>
-          </a>
-          <a href="$maps" target="_blank" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
-            <span class="text-xl">📍</span>
-            <div><div class="font-semibold group-hover:text-blue-700">Localisation</div><div class="text-xs text-slate-500">$address</div></div>
-          </a>
-          <a href="/numeros" class="group rounded-xl border border-slate-200 hover:border-blue-700 p-4 flex items-center gap-3 transition">
-            <span class="text-xl">☎️</span>
-            <div><div class="font-semibold group-hover:text-blue-700">Numéros utiles</div><div class="text-xs text-slate-500">Urgences & contacts du quartier</div></div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <footer class="mt-8 text-center text-xs text-slate-500">
-      Instant Roméon • Quartier d’Endoume • Marseille 7<sup>e</sup>
-    </footer>
+<body class="bg-slate-100 text-slate-800 p-8">
+  <div class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow space-y-6">
+    <h1 class="text-2xl font-semibold">🏡 Guide de l'appartement</h1>
+    <p>Bienvenue à <b>l’Instant Roméon</b> !</p>
+    <h2 class="text-xl font-semibold">📶 Wi-Fi</h2>
+    <p>Réseau : <b>$ssid_h</b></p>
+    <p>Mot de passe : <b>$pwd_h</b></p>
+    <img src="data:image/png;base64,$qr_b64" alt="QR Wi-Fi" class="w-40 h-40 border p-2 rounded bg-white" />
+    <p><a href="$airbnb" class="text-blue-700 underline" target="_blank">Voir l’annonce Airbnb</a></p>
+    <p><a href="$maps" class="text-blue-700 underline" target="_blank">$address</a></p>
+    <p><a href="$logout_url" class="text-sm text-gray-600 underline">Déconnexion</a></p>
   </div>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js');
-    }
-
-    let deferredPrompt;
-    const installBtn = document.getElementById('installAppBtn');
-    installBtn.style.display = 'none';
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'inline-flex';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        installBtn.style.display = 'none';
-      } else {
-        alert("ℹ️ Pour installer sur iPhone :\\n1. Bouton Partager (carré + flèche)\\n2. Choisissez 'Sur l’écran d’accueil'");
-      }
-    });
-  </script>
 </body>
 </html>
 """)
 
-# ========= Utils =========
+# ========= UTILS =========
 def _now_utc():
     return datetime.now(timezone.utc)
 
@@ -239,7 +110,7 @@ def _qr_png_base64(text: str, box_size: int = 6, border: int = 2) -> str:
     img.save(buf, format="PNG")
     return base64.b64encode(buf.getvalue()).decode("ascii")
 
-# ========= Routes =========
+# ========= ROUTES =========
 @app.get("/")
 def login_get():
     return _html(LOGIN_HTML.substitute(lang="fr", message=""))
@@ -257,10 +128,8 @@ def login_post():
 def guide():
     if not session.get("ok"):
         return redirect(url_for("login_get"))
-
     wifi_text = _wifi_qr_text(WIFI_SSID, WIFI_PASS, WIFI_AUTH)
     qr_b64 = _qr_png_base64(wifi_text, box_size=6, border=1)
-
     html_out = GUIDE_HTML.substitute(
         logout_url=url_for("logout"),
         ssid_h=html.escape(WIFI_SSID),
@@ -276,44 +145,3 @@ def guide():
 def logout():
     session.clear()
     return redirect(url_for("login_get"))
-
-# ------- Rubriques -------
-@app.get("/restaurants")
-def restaurants():
-    if not session.get("ok"):
-        return redirect(url_for("login_get"))
-    return render_template("restaurants.html")
-
-@app.get("/visites")
-def visites():
-    if not session.get("ok"):
-        return redirect(url_for("login_get"))
-    return render_template("visites.html")
-
-@app.get("/sorties")
-def sorties():
-    if not session.get("ok"):
-        return redirect(url_for("login_get"))
-    return render_template("sorties.html")
-
-@app.get("/commerces")
-def commerces():
-    if not session.get("ok"):
-        return redirect(url_for("login_get"))
-    return render_template("commerces.html")
-
-@app.get("/numeros")
-def numeros():
-    if not session.get("ok"):
-        return redirect(url_for("login_get"))
-    return render_template("numeros.html")
-
-# ------- PWA: service worker -------
-@app.get("/service-worker.js")
-def sw():
-    js = (
-        "self.addEventListener('install', e=>self.skipWaiting());"
-        "self.addEventListener('activate', e=>self.clients.claim());"
-        "self.addEventListener('fetch', e=>{});"
-    )
-    return make_response(js, 200, {"Content-Type": "text/javascript"})
