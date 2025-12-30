@@ -13,7 +13,7 @@ import qrcode
 from qrcode.constants import ERROR_CORRECT_M
 
 app = Flask(__name__)
-app.secret_key = "instant-romeon-secret-2025-abc123"  # ✅ Clé fixée ici
+app.secret_key = "instant-romeon-secret-2025-abc123"  # 🔐 Fixe la clé secrète ici
 
 # ========= CONFIG =========
 WIFI_SSID = "Linstant Roméon"
@@ -29,50 +29,7 @@ TOKENS = [
      "start": "2020-01-01T00:00:00Z", "end": "2030-12-31T23:59:59Z"},
 ]
 
-# ========= Utils =========
-def _now_utc():
-    return datetime.now(timezone.utc)
-
-def _parse_iso(s):
-    return datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
-
-def _token_valid(token):
-    now = _now_utc()
-    for t in TOKENS:
-        if t["token"] == token:
-            if _parse_iso(t["start"]) <= now <= _parse_iso(t["end"]):
-                return t
-    return None
-
-def _html(s: str):
-    resp = make_response(s)
-    resp.headers["Content-Type"] = "text/html; charset=utf-8"
-    return resp
-
-def _wifi_escape(value: str) -> str:
-    return re.sub(r'([\\;,:"])', r'\\\1', value)
-
-def _wifi_qr_text(ssid: str, pwd: str, auth: str) -> str:
-    ssid_e = _wifi_escape(ssid)
-    pwd_e  = _wifi_escape(pwd)
-    auth_e = _wifi_escape(auth or "")
-    return f"WIFI:T:{auth_e};S:{ssid_e};P:{pwd_e};;"
-
-def _qr_png_base64(text: str, box_size: int = 6, border: int = 2) -> str:
-    qr = qrcode.QRCode(
-        version=None,
-        error_correction=ERROR_CORRECT_M,
-        box_size=box_size,
-        border=border
-    )
-    qr.add_data(text)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    buf = BytesIO()
-    img.save(buf, format="PNG")
-    return base64.b64encode(buf.getvalue()).decode("ascii")
-
-# ========= HTML Templates =========
+# ========= HTML =========
 LOGIN_HTML = Template("""<!doctype html>
 <html lang="$lang">
 <meta charset="utf-8" />
@@ -118,7 +75,50 @@ LOGIN_HTML = Template("""<!doctype html>
 </html>
 """)
 
-# ========= Routes =========
+# ========= UTILS =========
+def _now_utc():
+    return datetime.now(timezone.utc)
+
+def _parse_iso(s):
+    return datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+
+def _token_valid(token):
+    now = _now_utc()
+    for t in TOKENS:
+        if t["token"].lower() == token.lower():  # insensible à la casse
+            if _parse_iso(t["start"]) <= now <= _parse_iso(t["end"]):
+                return t
+    return None
+
+def _html(s: str):
+    resp = make_response(s)
+    resp.headers["Content-Type"] = "text/html; charset=utf-8"
+    return resp
+
+def _wifi_escape(value: str) -> str:
+    return re.sub(r'([\\;,:"])', r'\\\1', value)
+
+def _wifi_qr_text(ssid: str, pwd: str, auth: str) -> str:
+    ssid_e = _wifi_escape(ssid)
+    pwd_e  = _wifi_escape(pwd)
+    auth_e = _wifi_escape(auth or "")
+    return f"WIFI:T:{auth_e};S:{ssid_e};P:{pwd_e};;"
+
+def _qr_png_base64(text: str, box_size: int = 6, border: int = 2) -> str:
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=ERROR_CORRECT_M,
+        box_size=box_size,
+        border=border
+    )
+    qr.add_data(text)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = BytesIO()
+    img.save(buf, format="PNG")
+    return base64.b64encode(buf.getvalue()).decode("ascii")
+
+# ========= ROUTES =========
 @app.get("/")
 def login_get():
     return _html(LOGIN_HTML.substitute(lang="fr", message=""))
@@ -136,10 +136,8 @@ def login_post():
 def guide():
     if not session.get("ok"):
         return redirect(url_for("login_get"))
-
     wifi_text = _wifi_qr_text(WIFI_SSID, WIFI_PASS, WIFI_AUTH)
     qr_b64 = _qr_png_base64(wifi_text, box_size=6, border=1)
-
     html_out = Template(open("templates/guide.html").read()).substitute(
         logout_url=url_for("logout"),
         ssid_h=html.escape(WIFI_SSID),
@@ -156,7 +154,6 @@ def logout():
     session.clear()
     return redirect(url_for("login_get"))
 
-# ------- Rubriques -------
 @app.get("/restaurants")
 def restaurants():
     if not session.get("ok"):
@@ -187,7 +184,6 @@ def numeros():
         return redirect(url_for("login_get"))
     return render_template("numeros.html")
 
-# ------- PWA: service worker -------
 @app.get("/service-worker.js")
 def sw():
     js = (
